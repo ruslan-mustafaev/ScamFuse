@@ -1,0 +1,9 @@
+# Demo site on Cloudflare Workers (static files only, free plan).
+# Published by .github/workflows/demo.yml at https://scamfuse-demo.<your-subdomain>.workers.dev
+
+name = "scamfuse-demo"
+compatibility_date = "2026-11-01"
+workers_dev = true
+
+[assets]
+directory = "./demo"

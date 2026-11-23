@@ -14,7 +14,7 @@ screen. They can also read out a one-time code by phone to unlock the action.
 
 It is made for parents and grandparents, for children and teenagers, and for yourself.
 
-[Try the demo](https://ruslan-mustafaev.github.io/ScamFuse/) · [Privacy](docs/PRIVACY.md) · [Limits](docs/THREAT-MODEL.md) · [Translate](docs/TRANSLATING.md)
+[Try the demo](https://scamfuse-demo.dev-interactive-rm.workers.dev/) · [Privacy](docs/PRIVACY.md) · [Limits](docs/THREAT-MODEL.md) · [Translate](docs/TRANSLATING.md)
 
 ## What it stops
 

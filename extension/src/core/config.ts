@@ -1,7 +1,7 @@
 // Project addresses. Change them here if the repository moves.
 
 export const PROJECT_URL = 'https://github.com/ruslan-mustafaev/ScamFuse';
-export const DEMO_URL = 'https://ruslan-mustafaev.github.io/ScamFuse/';
+export const DEMO_URL = 'https://scamfuse-demo.dev-interactive-rm.workers.dev/';
 
 /** Small credit line at the bottom of setup, settings and the toolbar window. */
 export const MADE_BY_NAME = 'Dev - Interactive';

@@ -1,12 +1,9 @@
 name: Demo pages
 
-# Publishes demo/ to GitHub Pages (free for public repositories).
-# One-time setup: Settings → Pages → Source: GitHub Actions.
+# Optional mirror of the demo on GitHub Pages. The main demo is published to Cloudflare
+# by demo.yml. To use Pages: Settings → Pages → Source: GitHub Actions, then run this by hand.
 
 on:
-  push:
-    branches: [main]
-    paths: ['demo/**', '.github/workflows/pages.yml']
   workflow_dispatch:
 
 permissions:
