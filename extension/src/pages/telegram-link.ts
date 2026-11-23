@@ -4,7 +4,7 @@
 import qrcode from 'qrcode-generator';
 import type { Translator } from '../core/i18n.ts';
 import type { PairingInfo, PairingStatus, RelayInfo } from '../core/types.ts';
-import { h, send } from './common.ts';
+import { h, send, withIcon } from './common.ts';
 
 const SVG = 'http://www.w3.org/2000/svg';
 const POLL_MS = 2000;
@@ -68,7 +68,7 @@ export function telegramBlock(tr: Translator, relay: RelayInfo, options: Telegra
 
   function renderLinked(note?: string): void {
     stop();
-    const test = h('button', { class: 'btn btn-secondary', type: 'button', id: 'tg-test' }, tr.t('btn_tg_test'));
+    const test = h('button', { class: 'btn btn-secondary', type: 'button', id: 'tg-test' }, ...withIcon('bell', tr.t('btn_tg_test')));
     const status = h('p', { class: 'small', role: 'status' }, note ?? '');
     test.addEventListener('click', async () => {
       test.disabled = true;
@@ -102,7 +102,7 @@ export function telegramBlock(tr: Translator, relay: RelayInfo, options: Telegra
       root,
       h('p', { class: 'muted' }, tr.t('tg_text')),
       message ? h('p', { class: 'notice error' }, message) : null,
-      h('button', { class: 'btn btn-primary', type: 'button', id: 'tg-connect', onclick: () => void connect() }, tr.t('btn_tg_connect')),
+      h('button', { class: 'btn btn-primary', type: 'button', id: 'tg-connect', onclick: () => void connect() }, ...withIcon('send', tr.t('btn_tg_connect'))),
     );
   }
 

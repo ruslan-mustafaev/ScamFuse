@@ -16,7 +16,7 @@ import {
   normalizeRelayUrl,
 } from '../core/settings.ts';
 import type { Channel, DecideResult, Mode, Profile, PublicState, Settings } from '../core/types.ts';
-import { h, languageSelect, logo, madeBy, mount, send, translator } from './common.ts';
+import { h, iconTile, type IconName, languageSelect, logo, madeBy, mount, send, translator, withIcon } from './common.ts';
 import { telegramBlock } from './telegram-link.ts';
 
 type Patch = Partial<Omit<Settings, 'pin' | 'version'>>;
@@ -56,11 +56,11 @@ function renderLock(): void {
   const input = h('input', { type: 'password', inputmode: 'numeric', maxlength: 6, id: 'unlock-pin', autocomplete: 'off' });
   const message = h('p', { role: 'alert', class: 'small' });
   const form = h('form', { class: 'card' },
-    h('h1', {}, tr.t('opt_locked_title')),
+    h('div', { class: 'section-head' }, iconTile('lock'), h('h1', { style: 'margin: 0' }, tr.t('opt_locked_title'))),
     h('p', { class: 'muted' }, tr.t('opt_locked_text')),
     h('label', { class: 'field' }, h('span', {}, tr.t('field_pin_short')), input),
     message,
-    h('button', { class: 'btn btn-primary', type: 'submit' }, tr.t('btn_unlock')),
+    h('button', { class: 'btn btn-primary', type: 'submit' }, ...withIcon('lock', tr.t('btn_unlock'))),
   );
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -82,8 +82,11 @@ function renderLock(): void {
   input.focus();
 }
 
-function section(title: string, ...children: (Node | null)[]): HTMLElement {
-  return h('section', { class: 'card section' }, h('h2', {}, title), ...children);
+function section(title: string, iconName: IconName, ...children: (Node | null)[]): HTMLElement {
+  return h('section', { class: 'card section' },
+    h('div', { class: 'section-head' }, iconTile(iconName), h('h2', {}, title)),
+    ...children,
+  );
 }
 
 function radios<T extends string>(name: string, values: readonly T[], current: T, label: (value: T) => string, onPick: (value: T) => void, disabled: (value: T) => boolean = () => false): HTMLElement {
@@ -115,13 +118,14 @@ function render(): void {
   const s = state.settings;
 
   // ------------------------------------------------ header + on/off
-  const enabled = h('input', { type: 'checkbox', id: 'enabled', checked: s.enabled });
+  const enabled = h('input', { type: 'checkbox', class: 'switch', id: 'enabled', checked: s.enabled });
   enabled.addEventListener('change', () => void save({ enabled: enabled.checked }).then(render));
 
   // ------------------------------------------------ people
   const channels: Channel[] = ['whatsapp', 'telegram', 'email'];
   const people = section(
     tr.t('opt_section_people'),
+    'users',
     textField(tr.t('field_who'), s.guardianName, { maxlength: 60, id: 'opt-who', placeholder: tr.t('field_who_placeholder') }, () => '', (value) => void save({ guardianName: value })),
     h('div', { class: 'field' },
       h('span', {}, tr.t('field_channel')),
@@ -175,6 +179,7 @@ function render(): void {
 
   const protection = section(
     tr.t('opt_section_protection'),
+    'shield',
     h('div', { class: 'field' },
       h('span', {}, tr.t('opt_profile')),
       radios('profile', profiles, s.profile, (p) => tr.t(`profile_${p}`), (p) => void save({ profile: p, detectors: defaultDetectors(p) }).then(render)),
@@ -212,7 +217,7 @@ function render(): void {
       voice,
     ),
   );
-  const detectors = section(tr.t('opt_section_detectors'), ...detectorRows);
+  const detectors = section(tr.t('opt_section_detectors'), 'scan', ...detectorRows);
 
   // ------------------------------------------------ alerts in Telegram
   const relayField = textField(
@@ -225,6 +230,7 @@ function render(): void {
   relayField.append(h('small', { class: 'hint' }, tr.t('opt_relay_hint')));
   const telegram = section(
     tr.t('tg_title'),
+    'bell',
     state.relay.configured
       ? textField(tr.t('field_install_name'), s.installName, { maxlength: 60, id: 'opt-install-name', placeholder: tr.t('field_install_name_placeholder') }, () => '', (value) => void save({ installName: value }))
       : h('p', { class: 'muted' }, tr.t('opt_relay_none')),
@@ -267,9 +273,10 @@ function render(): void {
     : h('p', { class: 'muted' }, tr.t('opt_sites_empty'));
   const sites = section(
     tr.t('opt_section_sites'),
+    'star',
     h('p', { class: 'muted small' }, tr.t('opt_sites_hint')),
     siteList,
-    h('div', { class: 'inline', style: 'margin-top: 12px' }, h('label', { class: 'field' }, siteInput), addSite),
+    h('div', { class: 'inline', style: 'margin-top: 14px' }, h('label', { class: 'field' }, siteInput), addSite),
     siteError,
   );
 
@@ -291,6 +298,7 @@ function render(): void {
     : h('p', { class: 'muted' }, tr.t('log_empty'));
   const logSection = section(
     tr.t('opt_section_log'),
+    'list',
     log,
     state.log.length
       ? h('button', { class: 'btn-link', type: 'button', onclick: async () => {
@@ -306,12 +314,12 @@ function render(): void {
   // ------------------------------------------------ about
   const about = section(
     tr.t('opt_section_about'),
+    'info',
     h('p', {}, tr.t('about_text')),
     h('p', { class: 'muted small' }, tr.t('about_version', { version: state.version })),
-    h('p', {},
-      h('a', { href: PROJECT_URL, target: '_blank', rel: 'noopener' }, tr.t('about_source')),
-      ' · ',
-      h('a', { href: 'welcome.html' }, tr.t('btn_rerun_setup')),
+    h('div', { class: 'popup-links', style: 'max-width: 460px' },
+      h('a', { href: PROJECT_URL, target: '_blank', rel: 'noopener' }, ...withIcon('code', tr.t('about_source'), 18)),
+      h('a', { href: 'welcome.html' }, ...withIcon('play', tr.t('btn_rerun_setup'), 18)),
     ),
   );
 
@@ -326,9 +334,10 @@ function render(): void {
           });
         }),
       ),
-      h('h1', {}, tr.t('opt_title')),
-      h('label', { class: 'card section switch-row', style: 'padding: 20px 28px' },
-        h('div', { class: 'text' }, h('strong', { style: 'font-size: 22px' }, tr.t('opt_enabled'))),
+      h('h1', { class: 'page-title' }, tr.t('opt_title')),
+      h('label', { class: 'card master' },
+        iconTile(s.enabled ? 'shield-check' : 'shield-off', s.enabled ? 'ok' : 'danger', 26),
+        h('div', { class: 'text' }, h('strong', {}, tr.t(s.enabled ? 'popup_on' : 'popup_off'))),
         enabled,
       ),
       people,

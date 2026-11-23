@@ -206,7 +206,7 @@ test('the pause screen follows a manual language choice', async () => {
   await page.goto(`${origin}/fake-alert.html?lang=en&lang-test=1`);
   await waitForPause(page);
   assert.equal(await page.locator('h1').textContent(), 'Стоп. Давайте проверим.');
-  assert.equal(await page.locator('#ask').textContent(), 'Спросить Dad');
+  assert.equal(await page.locator('#ask').textContent(), 'Спросить: Dad');
   assert.equal(await page.evaluate(() => document.documentElement.lang), 'ru');
   await page.close();
 });

@@ -5,7 +5,7 @@ import { DEMO_URL } from '../core/config.ts';
 import type { Translator } from '../core/i18n.ts';
 import { defaultChannel, isValidEmail, isValidPin, normalizePhone } from '../core/settings.ts';
 import type { Channel, DecideResult, Profile, PublicState } from '../core/types.ts';
-import { h, languageSelect, logo, madeBy, mount, send, translator } from './common.ts';
+import { h, icon, iconTile, type IconName, languageSelect, logo, madeBy, mount, send, translator, withIcon } from './common.ts';
 import { telegramBlock } from './telegram-link.ts';
 
 interface Draft {
@@ -42,11 +42,22 @@ async function start(): Promise<void> {
   else renderProfiles();
 }
 
+/** "Step 1 of 2" with two small bars. */
+function steps(step: number): HTMLElement {
+  return h('div', { class: 'steps' },
+    h('span', { class: 'bars', 'aria-hidden': 'true' },
+      h('i', { class: 'on' }),
+      h('i', { class: step >= 2 ? 'on' : '' }),
+    ),
+    h('span', { class: 'muted small' }, tr.t('welcome_step', { step })),
+  );
+}
+
 function topbar(step: number | null): HTMLElement {
   return h('div', { class: 'topbar' },
     logo(),
-    h('div', { style: 'display:flex; gap:12px; align-items:center' },
-      step ? h('span', { class: 'muted small' }, tr.t('welcome_step', { step })) : null,
+    h('div', { class: 'topbar-right' },
+      step ? steps(step) : null,
       languageSelect(tr, language, async (next) => {
         language = next;
         tr = await translator(language);
@@ -71,8 +82,9 @@ function renderProtected(): void {
     h('div', { class: 'page' },
       topbar(null),
       h('main', { class: 'card stack' },
+        iconTile('lock', 'brand', 26),
         h('h1', {}, tr.t('opt_locked_text')),
-        h('a', { class: 'btn btn-primary', href: 'options.html' }, tr.t('btn_open_settings')),
+        h('a', { class: 'btn btn-primary', href: 'options.html' }, ...withIcon('sliders', tr.t('btn_open_settings'))),
       ),
     ),
   );
@@ -83,13 +95,14 @@ function renderProtected(): void {
 function renderProfiles(): void {
   rerender = renderProfiles;
   const choices: Profile[] = ['elder', 'child', 'self'];
+  const icons: Record<Profile, IconName> = { elder: 'heart', child: 'smile', self: 'user' };
   show(
     h('div', { class: 'page' },
       topbar(1),
       h('main', {},
-        h('h1', {}, tr.t('welcome_title')),
+        h('h1', { class: 'hero-title' }, tr.t('welcome_title')),
         h('p', { class: 'lead muted' }, tr.t('welcome_subtitle')),
-        h('div', { class: 'stack', style: 'margin-top: 20px' },
+        h('div', { class: 'stack', style: 'margin-top: 24px' },
           ...choices.map((profile) =>
             h('button', {
               class: 'choice',
@@ -100,8 +113,12 @@ function renderProfiles(): void {
                 renderContact();
               },
             },
-              h('strong', {}, tr.t(`profile_${profile}`)),
-              h('span', {}, tr.t(`profile_${profile}_hint`)),
+              iconTile(icons[profile], 'brand', 26),
+              h('span', { class: 'choice-text' },
+                h('strong', {}, tr.t(`profile_${profile}`)),
+                h('span', {}, tr.t(`profile_${profile}_hint`)),
+              ),
+              icon('chevron', 22),
             ),
           ),
         ),
@@ -187,7 +204,7 @@ function renderContact(): void {
   const pin = h('label', { class: 'field' }, h('span', {}, tr.t('field_pin')), pinInput, pinHint);
 
   const formError = h('div', { role: 'alert' });
-  const enable = h('button', { class: 'btn btn-primary', type: 'submit', id: 'enable' }, tr.t('btn_enable'));
+  const enable = h('button', { class: 'btn btn-primary', type: 'submit', id: 'enable' }, ...withIcon('shield-check', tr.t('btn_enable')));
 
   const form = h('form', { class: 'card', novalidate: true },
     h('h1', {}, tr.tp('contact_title', draft.profile)),
@@ -288,17 +305,19 @@ function renderDone(): void {
     h('div', { class: 'page' },
       topbar(null),
       h('main', { class: 'card' },
-        h('div', { class: 'done-mark', 'aria-hidden': 'true' }, '✓'),
+        h('div', { class: 'done-mark', 'aria-hidden': 'true' }, icon('shield-check', 40)),
         h('h1', { id: 'done' }, tr.t('done_title')),
-        h('ul', { class: 'points lead' },
-          h('li', {}, tr.t('done_point_stop')),
-          h('li', {}, hasContact ? tr.t('done_point_ask', { name: draft.guardianName }) : tr.t('done_point_ask_none')),
-          h('li', {}, tr.t('done_point_private')),
+        h('ul', { class: 'checks lead' },
+          h('li', {}, icon('check', 24), h('span', {}, tr.t('done_point_stop'))),
+          h('li', {}, icon('check', 24), h('span', {},
+            hasContact ? tr.t('done_point_ask', { name: draft.guardianName }) : tr.t('done_point_ask_none'),
+          )),
+          h('li', {}, icon('check', 24), h('span', {}, tr.t('done_point_private'))),
         ),
-        draft.profile !== 'self' ? h('p', { class: 'notice' }, tr.t('done_show')) : null,
-        h('div', { class: 'stack', style: 'margin-top: 20px' },
-          h('a', { class: 'btn btn-primary', href: DEMO_URL, target: '_blank', rel: 'noopener' }, tr.t('btn_try_demo')),
-          h('a', { class: 'btn btn-secondary', href: 'options.html' }, tr.t('btn_open_settings')),
+        draft.profile !== 'self' ? h('p', { class: 'notice info' }, icon('info', 22), h('span', {}, tr.t('done_show'))) : null,
+        h('div', { class: 'stack', style: 'margin-top: 24px' },
+          h('a', { class: 'btn btn-primary', href: DEMO_URL, target: '_blank', rel: 'noopener' }, ...withIcon('play', tr.t('btn_try_demo'))),
+          h('a', { class: 'btn btn-secondary', href: 'options.html' }, ...withIcon('sliders', tr.t('btn_open_settings'))),
         ),
         h('p', { class: 'muted small', style: 'margin-top: 20px' }, tr.t('done_pin_icon')),
       ),
@@ -320,7 +339,7 @@ function telegramCard(): HTMLElement {
     void send({ type: 'saveSettings', patch: { installName: name.value.trim() } });
   });
   return h('section', { class: 'card', style: 'margin-top: 20px' },
-    h('h2', {}, tr.t('tg_title')),
+    h('div', { class: 'section-head' }, iconTile('bell'), h('h2', {}, tr.t('tg_title'))),
     h('label', { class: 'field' }, h('span', {}, tr.t('field_install_name')), name),
     telegramBlock(tr, state.relay),
   );

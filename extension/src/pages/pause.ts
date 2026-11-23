@@ -6,7 +6,7 @@ import { buildAskLink, buildAskMessage, canAsk, formatPhone, telLink } from '../
 import { toBcp47, type Translator } from '../core/i18n.ts';
 import { continueAvailableAt } from '../core/policy.ts';
 import type { DecideResult, PageMessage, PauseView } from '../core/types.ts';
-import { h, kindSuffix, languageSelect, logo, mount, reasonLabel, send, translator } from './common.ts';
+import { h, icon, kindSuffix, languageSelect, logo, mount, reasonLabel, send, translator, withIcon } from './common.ts';
 
 const id = new URLSearchParams(location.search).get('id') ?? '';
 const POLL_MS = 3000;
@@ -51,8 +51,9 @@ function renderExpired(tr: Translator): void {
     h('div', { class: 'page' },
       h('div', { class: 'topbar' }, logo()),
       h('div', { class: 'card' },
+        h('div', { class: 'done-mark', 'aria-hidden': 'true' }, icon('check', 40)),
         h('h1', {}, tr.t('expired_title')),
-        h('p', { class: 'lead' }, tr.t('expired_text')),
+        h('p', { class: 'lead muted' }, tr.t('expired_text')),
       ),
     ),
   );
@@ -79,13 +80,13 @@ function render(tr: Translator, initial: PauseView): void {
   const label = view.guardianName ? tr.t('btn_ask', { name: view.guardianName }) : tr.t('btn_ask_generic');
   let askButton: HTMLButtonElement | null = null;
   if (linked) {
-    askButton = h('button', { class: 'btn btn-primary', type: 'button', id: 'ask' }, label);
+    askButton = h('button', { class: 'btn btn-primary', type: 'button', id: 'ask' }, ...withIcon('send', label));
     askButton.addEventListener('click', async () => {
       if (askButton) askButton.disabled = true;
       await send({ type: 'askGuardian', id: view.event.id });
       await refresh();
     });
-    askBlock.append(askButton, h('p', { class: 'muted small', id: 'ask-hint' }, tr.t('ask_via_telegram')));
+    askBlock.append(askButton, h('p', { class: 'muted small hint-line', id: 'ask-hint' }, tr.t('ask_via_telegram')));
   } else {
     const target = { channel: view.channel, phone: view.guardianPhone, email: view.guardianEmail };
     const href = canAsk(target)
@@ -106,17 +107,17 @@ function render(tr: Translator, initial: PauseView): void {
           onclick: () => {
             void send({ type: 'markAsked', id: view.event.id });
           },
-        }, label),
-        h('p', { class: 'muted small' }, tr.t('ask_via', { channel: tr.t(`channel_${view.channel}`) })),
+        }, ...withIcon(view.channel === 'email' ? 'mail' : 'send', label)),
+        h('p', { class: 'muted small hint-line' }, tr.t('ask_via', { channel: tr.t(`channel_${view.channel}`) })),
       );
     } else {
-      askBlock.append(h('p', { class: 'muted' }, tr.t('ask_missing')));
+      askBlock.append(h('p', { class: 'notice info' }, tr.t('ask_missing')));
     }
   }
   const tel = telLink(view.guardianPhone);
   if (tel) {
     askBlock.append(
-      h('p', { class: 'lead' }, h('a', { href: tel }, tr.t('call_line', { phone: formatPhone(view.guardianPhone) }))),
+      h('a', { class: 'call-link', href: tel }, ...withIcon('phone', tr.t('call_line', { phone: formatPhone(view.guardianPhone) }))),
     );
   }
 
@@ -131,7 +132,7 @@ function render(tr: Translator, initial: PauseView): void {
       if (result?.ok) showStatus(tr.t('done_blocked'));
       else closeButton.disabled = false;
     },
-  }, tr.t(isDownload ? 'btn_close_download' : 'btn_close'));
+  }, ...withIcon('x', tr.t(isDownload ? 'btn_close_download' : 'btn_close')));
 
   const continueArea = continueBlock(tr, view, showStatus);
   const codeArea = h('div', {});
@@ -161,7 +162,7 @@ function render(tr: Translator, initial: PauseView): void {
     relayStatus.replaceChildren(...parts);
     if (askButton && (event.alertState === 'sent' || event.alertState === 'sending')) {
       askButton.disabled = true;
-      askButton.textContent = tr.t('btn_asked');
+      askButton.replaceChildren(...withIcon('check', tr.t('btn_asked')));
       askBlock.querySelector('#ask-hint')?.remove();
     }
     if (event.codeHash && codeArea.childElementCount === 0 && event.outcome === 'pending') {
@@ -177,24 +178,32 @@ function render(tr: Translator, initial: PauseView): void {
     }
   }
 
+  // A suspicious (not clearly fake) page is shown in amber; everything else in red.
+  const tone = view.event.level === 'medium' ? 'warn' : 'danger';
+  document.body.classList.add('is-pause', `tone-${tone}`);
+
   mount(
-    h('div', { class: 'page' },
+    h('div', { class: `page tone-${tone}` },
       h('div', { class: 'topbar' },
         logo(),
         languageSelect(tr, view.language, (language) => {
           void send({ type: 'saveSettings', patch: { language } }).then(() => location.reload());
         }),
       ),
-      h('main', { class: 'card' },
-        h('h1', {}, tr.t('pause_title')),
-        h('p', { class: 'lead' }, whatText(tr, view)),
-        h('p', { class: 'muted' }, tr.tp(`rule_${kind}`, view.profile)),
-        relayStatus,
-        h('div', { class: 'stack', style: 'margin-top: 24px' }, askBlock, closeButton),
-        status,
-        codeArea,
-        continueArea,
-        details(tr, view),
+      h('main', { class: 'card pause-card' },
+        h('div', { class: 'pause-head' },
+          h('div', { class: 'pause-mark', 'aria-hidden': 'true' }, icon(tone === 'warn' ? 'alert' : 'stop', 40)),
+          h('h1', {}, tr.t('pause_title')),
+          h('p', { class: 'lead' }, whatText(tr, view)),
+        ),
+        h('div', { class: 'pause-body' },
+          h('div', { class: 'callout' }, icon('info', 22), h('p', {}, tr.tp(`rule_${kind}`, view.profile))),
+          relayStatus,
+          h('div', { class: 'pause-actions' }, askBlock, closeButton),
+          status,
+          codeArea,
+          h('div', { class: 'pause-foot' }, continueArea, details(tr, view)),
+        ),
       ),
     ),
   );
@@ -248,7 +257,7 @@ function codeBlock(tr: Translator, view: PauseView, showStatus: (text: string, e
 function continueBlock(tr: Translator, view: PauseView, showStatus: (text: string, error?: boolean) => void): HTMLElement {
   const { event } = view;
   const availableAt = continueAvailableAt(event, view.mode, view.lockMinutes);
-  const block = h('div', { style: 'margin-top: 20px' });
+  const block = h('div', {});
 
   const continueButton = h('button', { class: 'btn-link', type: 'button', id: 'continue', disabled: true }, '');
   continueButton.addEventListener('click', async () => {
