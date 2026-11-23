@@ -59,7 +59,13 @@ jobs:
           # no answer or "slow down" is just a warning (extra calls would only add to the rate limit).
           me="$(curl -4 -sS -m 30 "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getMe" || true)"
           if [[ $me == *'"ok":true'* ]]; then
-            echo "Telegram bot: $(printf '%s' "$me" | grep -o '"username":"[^"]*"')"
+            # The bot's username comes from Telegram itself, so a new bot needs no config change.
+            username="$(printf '%s' "$me" | grep -o '"username":"[^"]*"' | cut -d'"' -f4)"
+            username_format='^[A-Za-z0-9_]{5,32}$'
+            if [[ $username =~ $username_format ]]; then
+              echo "BOT_USERNAME=$username" >> "$GITHUB_ENV"
+            fi
+            echo "Telegram bot: @$username"
           elif [[ $me == *'Too Many Requests'* ]]; then
             # Telegram rate-limits only bots it knows, so the token itself is fine.
             echo "::warning::Telegram asks to slow down (the token is valid); continuing."
@@ -77,7 +83,12 @@ jobs:
       - name: Publish the Worker
         run: |
           set -o pipefail
-          npx -y "$WRANGLER" deploy | tee deploy.log
+          args=()
+          if [ -n "${BOT_USERNAME:-}" ]; then
+            args+=(--var "BOT_USERNAME:$BOT_USERNAME")
+            echo "Bot username from Telegram: @$BOT_USERNAME"
+          fi
+          npx -y "$WRANGLER" deploy "${args[@]}" | tee deploy.log
 
       # After the first publish, so the Worker already exists.
       - name: Store the Telegram secrets
