@@ -55,13 +55,23 @@ jobs:
             echo "::error::TELEGRAM_BOT_TOKEN does not look like a bot token. Copy it again from @BotFather, without spaces."
             exit 1
           fi
-          me="$(curl -sS -m 30 "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getMe" || true)"
-          if [[ $me != *'"ok":true'* ]]; then
-            reason="$(printf '%s' "$me" | grep -o '"description":"[^"]*"' || echo 'no answer')"
+          # Ask Telegram whether it knows the token. Only a clear "no" stops the deploy;
+          # a network hiccup on the runner is just a warning.
+          me=""
+          for attempt in 1 2 3; do
+            me="$(curl -4 -sS -m 20 "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getMe" || true)"
+            [[ $me == *'"ok":'* ]] && break
+            sleep 3
+          done
+          if [[ $me == *'"ok":true'* ]]; then
+            echo "Telegram bot: $(printf '%s' "$me" | grep -o '"username":"[^"]*"')"
+          elif [[ $me == *'"ok":false'* ]]; then
+            reason="$(printf '%s' "$me" | grep -o '"description":"[^"]*"')"
             echo "::error::Telegram refused TELEGRAM_BOT_TOKEN ($reason). After /revoke in @BotFather, store the new token."
             exit 1
+          else
+            echo "::warning::Telegram did not answer from this runner; the token is checked again when Telegram is connected."
           fi
-          echo "Telegram bot: $(printf '%s' "$me" | grep -o '"username":"[^"]*"')"
 
       - name: Apply database migrations
         run: npx -y "$WRANGLER" d1 migrations apply scamfuse --remote
@@ -89,7 +99,7 @@ jobs:
           fi
           # New secrets can take a few seconds to reach the Worker.
           for attempt in 1 2 3 4 5 6 7 8; do
-            status="$(curl -sS -m 30 -o setup.json -w '%{http_code}' --get --data-urlencode "key=$TELEGRAM_WEBHOOK_SECRET" "$url/setup" || true)"
+            status="$(curl -sS -m 60 -o setup.json -w '%{http_code}' --get --data-urlencode "key=$TELEGRAM_WEBHOOK_SECRET" "$url/setup" || true)"
             if [ "$status" = "200" ] && grep -q '"ok":true' setup.json; then
               echo "Telegram connected: $(cat setup.json)"
               exit 0
@@ -97,5 +107,5 @@ jobs:
             echo "Attempt $attempt: HTTP $status $(cat setup.json 2>/dev/null)"
             sleep 5
           done
-          echo "::error::Telegram did not accept the webhook. Check TELEGRAM_BOT_TOKEN (after /revoke, store the new token)."
+          echo "::error::Telegram did not accept the webhook (reason above, after \"telegram\"). If it says Unauthorized, store the new token from @BotFather in TELEGRAM_BOT_TOKEN."
           exit 1
