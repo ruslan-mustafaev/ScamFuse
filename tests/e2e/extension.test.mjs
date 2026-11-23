@@ -80,7 +80,7 @@ test('a fake "I am not a robot" check is stopped and the command is removed', as
   await context.grantPermissions(['clipboard-read', 'clipboard-write'], { origin });
   const page = await context.newPage();
   await page.goto(`${origin}/clickfix.html?lang=en`);
-  await page.locator('#robot').check();
+  await page.locator('#robot').click(); // the page turns into the pause screen, so no checked-state wait
   await waitForPause(page);
 
   assert.equal(await page.locator('h1').textContent(), "Stop. Let's check.");
@@ -106,7 +106,7 @@ test('a fake "I am not a robot" check is stopped and the command is removed', as
 test('"Continue anyway" waits 15 seconds in advice mode, then returns to the page', async () => {
   const page = await context.newPage();
   await page.goto(`${origin}/clickfix.html?lang=en&second=1`);
-  await page.locator('#robot').check();
+  await page.locator('#robot').click(); // the page turns into the pause screen, so no checked-state wait
   await waitForPause(page);
   const button = page.locator('#continue');
   assert.equal(await button.isDisabled(), true);
@@ -169,13 +169,15 @@ test('a visible command copied with a copy button on a normal page is not stoppe
 });
 
 test('programs from unofficial sites pass in the elder profile and stop in the child profile', async () => {
+  const isPause = (p) => p.url().includes('/pages/pause.html');
+  const pausesBefore = new Set(context.pages().filter(isPause));
   const page = await context.newPage();
   await page.goto(`${origin}/index.html?lang=en`);
   const download = page.waitForEvent('download');
   await page.locator('#download-program').click();
   await download;
   await page.waitForTimeout(1000);
-  assert.equal(context.pages().some((p) => p.url().includes('/pages/pause.html')), false);
+  assert.equal(context.pages().some((p) => isPause(p) && !pausesBefore.has(p)), false);
 
   await worker.evaluate(async () => {
     const { settings } = await chrome.storage.local.get('settings');

@@ -127,7 +127,7 @@ test('the trusted person links Telegram with the code from the QR screen', async
 test('a stopped command reaches Telegram by itself, the reply shows up, and the code unlocks', async () => {
   const page = await context.newPage();
   await page.goto(`${origin}/clickfix.html?lang=en`);
-  await page.locator('#robot').check();
+  await page.locator('#robot').click(); // the page turns into the pause screen, so no checked-state wait
   await waitForPause(page);
 
   const alert = await lastAlert(/Mom, laptop: a site slipped a command into the clipboard/);
