@@ -236,7 +236,28 @@ test('setup registers the webhook only with the secret key', async () => {
   const ctx = setup();
   assert.equal((await ctx.call('GET', '/setup?key=wrong', undefined, {})).status, 403);
   const ok = await ctx.call('GET', `/setup?key=${SECRET}`, undefined, {});
+  assert.equal(ok.data.ok, true);
   assert.equal(ok.data.webhook, `${BASE}/telegram/webhook`);
+});
+
+test('setup reports why Telegram refused, without the token', async () => {
+  const { telegramClient } = await import('../../relay/src/telegram.ts');
+  const token = '123456789:AAbbccddeeffgghhiijjkkllmmnnooppqq';
+  const urls: string[] = [];
+  const client = telegramClient(token, 'https://api.telegram.test', async (input) => {
+    urls.push(input);
+    return new Response(JSON.stringify({ ok: false, error_code: 401, description: 'Unauthorized' }), { status: 401 });
+  });
+  const result = await client.setWebhook('https://relay.test/telegram/webhook', 'secret');
+  assert.deepEqual(result, { ok: false, error: '401 Unauthorized' });
+  assert.ok(urls[0]?.endsWith('/setWebhook'));
+
+  const broken = telegramClient(token, 'https://api.telegram.test', async () => {
+    throw new Error(`connect failed for https://api.telegram.test/bot${token}/setWebhook`);
+  });
+  const failure = await broken.setWebhook('https://relay.test/telegram/webhook', 'secret');
+  assert.equal(failure.ok, false);
+  assert.ok(!failure.error?.includes(token), failure.error);
 });
 
 test('a fake site alert names the brand it imitates', async () => {

@@ -5,7 +5,11 @@ import type { Keyboard, Telegram } from './types.ts';
 type FetchLike = (input: string, init: RequestInit) => Promise<Response>;
 
 export function telegramClient(token: string, base = 'https://api.telegram.org', fetcher: FetchLike = fetch): Telegram {
+  // Why the last call failed, for /setup. Telegram's descriptions never include the token.
+  let lastError = '';
+
   async function call<T>(method: string, body: Record<string, unknown>): Promise<T | null> {
+    lastError = '';
     try {
       const response = await fetcher(`${base}/bot${token}/${method}`, {
         method: 'POST',
@@ -14,12 +18,14 @@ export function telegramClient(token: string, base = 'https://api.telegram.org',
       });
       const data = (await response.json()) as { ok: boolean; result?: T; description?: string };
       if (!data.ok) {
-        console.warn(`Telegram ${method} failed: ${data.description ?? response.status}`);
+        lastError = `${response.status} ${data.description ?? ''}`.trim();
+        console.warn(`Telegram ${method} failed: ${lastError}`);
         return null;
       }
       return data.result ?? null;
     } catch (cause) {
-      console.warn(`Telegram ${method} failed`, cause);
+      lastError = cause instanceof Error ? cause.message.split(token).join('<token>') : 'request failed';
+      console.warn(`Telegram ${method} failed: ${lastError}`);
       return null;
     }
   }
@@ -53,7 +59,7 @@ export function telegramClient(token: string, base = 'https://api.telegram.org',
         allowed_updates: ['message', 'callback_query'],
         drop_pending_updates: true,
       });
-      return result === true;
+      return result === true ? { ok: true } : { ok: false, error: lastError || 'unexpected answer' };
     },
     async setCommands(commands, languageCode) {
       await call('setMyCommands', { commands, ...(languageCode ? { language_code: languageCode } : {}) });

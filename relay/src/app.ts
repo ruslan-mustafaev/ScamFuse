@@ -72,12 +72,15 @@ export async function handle(request: Request, deps: Deps): Promise<Response> {
   // One-time setup after deploy: open /setup?key=<webhook secret> in a browser.
   if (method === 'GET' && path === '/setup') {
     if (!deps.webhookSecret || !safeEqual(url.searchParams.get('key') ?? '', deps.webhookSecret)) return error('forbidden', 403);
-    const ok = await deps.telegram.setWebhook(`${url.origin}/telegram/webhook`, deps.webhookSecret);
+    const webhook = await deps.telegram.setWebhook(`${url.origin}/telegram/webhook`, deps.webhookSecret);
+    if (!webhook.ok) {
+      return json({ ok: false, telegram: webhook.error, webhook: `${url.origin}/telegram/webhook`, bot: deps.botUsername }, 502);
+    }
     await deps.telegram.setCommands(texts('en').commands);
     await deps.telegram.setCommands(texts('ru').commands, 'ru');
     await deps.telegram.setDescription(texts('en').botDescription, texts('en').botShortDescription);
     await deps.telegram.setDescription(texts('ru').botDescription, texts('ru').botShortDescription, 'ru');
-    return json({ ok, webhook: `${url.origin}/telegram/webhook`, bot: deps.botUsername });
+    return json({ ok: true, webhook: `${url.origin}/telegram/webhook`, bot: deps.botUsername });
   }
 
   // ---------------------------------------------------------------- uninstall notice

@@ -7,7 +7,7 @@ import type { Deps, Env } from './types.ts';
 function deps(env: Env): Deps {
   return {
     db: env.DB,
-    telegram: telegramClient(env.TELEGRAM_BOT_TOKEN, env.TELEGRAM_API || 'https://api.telegram.org'),
+    telegram: telegramClient((env.TELEGRAM_BOT_TOKEN ?? '').trim(), env.TELEGRAM_API || 'https://api.telegram.org'),
     botUsername: env.BOT_USERNAME,
     webhookSecret: env.TELEGRAM_WEBHOOK_SECRET,
     now: () => Date.now(),

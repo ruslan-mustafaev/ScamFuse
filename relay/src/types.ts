@@ -91,7 +91,8 @@ export interface Telegram {
   sendMessage(chatId: number, text: string, keyboard?: Keyboard): Promise<number | null>;
   editMessage(chatId: number, messageId: number, text: string, keyboard?: Keyboard): Promise<void>;
   answerCallback(callbackId: string, text?: string): Promise<void>;
-  setWebhook(url: string, secret: string): Promise<boolean>;
+  /** `error` is Telegram's own explanation when it refuses (never contains the token). */
+  setWebhook(url: string, secret: string): Promise<{ ok: boolean; error?: string }>;
   setCommands(commands: { command: string; description: string }[], languageCode?: string): Promise<void>;
   setDescription(description: string, shortDescription: string, languageCode?: string): Promise<void>;
 }

@@ -44,10 +44,24 @@ jobs:
             exit 1
           fi
           # Telegram accepts only these characters in the webhook secret.
-          if ! printf '%s' "$TELEGRAM_WEBHOOK_SECRET" | grep -Eq '^[A-Za-z0-9_-]{16,256}$'; then
-            echo "::error::TELEGRAM_WEBHOOK_SECRET must be 16-256 characters: Latin letters, digits, _ or -"
+          secret_format='^[A-Za-z0-9_-]{16,256}$'
+          if [[ ! $TELEGRAM_WEBHOOK_SECRET =~ $secret_format ]]; then
+            echo "::error::TELEGRAM_WEBHOOK_SECRET must be 16-256 characters: Latin letters, digits, _ or - (no spaces)"
             exit 1
           fi
+          # A bot token from @BotFather: digits, a colon, then letters. No spaces or line breaks.
+          token_format='^[0-9]{5,}:[A-Za-z0-9_-]{30,}$'
+          if [[ ! $TELEGRAM_BOT_TOKEN =~ $token_format ]]; then
+            echo "::error::TELEGRAM_BOT_TOKEN does not look like a bot token. Copy it again from @BotFather, without spaces."
+            exit 1
+          fi
+          me="$(curl -sS -m 30 "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getMe" || true)"
+          if [[ $me != *'"ok":true'* ]]; then
+            reason="$(printf '%s' "$me" | grep -o '"description":"[^"]*"' || echo 'no answer')"
+            echo "::error::Telegram refused TELEGRAM_BOT_TOKEN ($reason). After /revoke in @BotFather, store the new token."
+            exit 1
+          fi
+          echo "Telegram bot: $(printf '%s' "$me" | grep -o '"username":"[^"]*"')"
 
       - name: Apply database migrations
         run: npx -y "$WRANGLER" d1 migrations apply scamfuse --remote

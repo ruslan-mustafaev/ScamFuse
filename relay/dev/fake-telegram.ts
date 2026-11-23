@@ -38,7 +38,7 @@ export function fakeTelegram(): FakeTelegram {
       answers.push({ id, text });
     },
     async setWebhook() {
-      return true;
+      return { ok: true };
     },
     async setCommands() {},
     async setDescription() {},
