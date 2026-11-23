@@ -1,0 +1,35 @@
+{
+  "language": "en",
+  "description": "Phrases typical for fake virus alerts (tech support scams). 'words' score 1 each, 'strong' score 2 each. Lower case.",
+  "words": [
+    "virus",
+    "infected",
+    "malware",
+    "spyware",
+    "trojan",
+    "hacked",
+    "security alert",
+    "windows defender",
+    "microsoft defender",
+    "apple security",
+    "error code",
+    "unauthorized access",
+    "your data is at risk",
+    "firewall",
+    "technical support",
+    "toll free",
+    "do not ignore"
+  ],
+  "strong": [
+    "your computer has been blocked",
+    "your computer has been locked",
+    "windows has been locked",
+    "do not restart your computer",
+    "do not close this window",
+    "call microsoft support",
+    "call apple support",
+    "call technical support",
+    "contact technical support immediately",
+    "access to this pc has been blocked"
+  ]
+}
