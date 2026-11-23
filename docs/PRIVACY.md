@@ -1,6 +1,7 @@
 # Privacy
 
-ScamFuse runs on the computer where it is installed. Version 0.1 has no server.
+ScamFuse runs on the computer where it is installed. The only server is the optional alert relay
+for Telegram; without it, nothing leaves the computer by itself.
 
 ## What stays on the computer
 
@@ -16,10 +17,24 @@ clipboard contents.
 
 ## What leaves the computer
 
-Nothing, unless someone presses **Ask …**. That button opens WhatsApp, Telegram or the e-mail
-program with a message filled in: what was stopped, the site name and the time. The person sends
-it themselves, from their own account. Site names are written as `example[.]com` so messengers do
-not turn them into clickable links.
+Without Telegram linked: nothing, unless someone presses **Ask …**. That button opens WhatsApp,
+Telegram or the e-mail program with a message filled in: what was stopped, the site name and the
+time. The person sends it themselves, from their own account.
+
+With Telegram linked, the extension talks to the alert relay ([relay/](../relay/README.md)):
+
+| Sent | When |
+| --- | --- |
+| A random install ID, a secret (stored there only as a hash), the computer's name for alerts, profile, language, time zone | Once, when Telegram is linked |
+| Kind of action, site name, a one-time unlock code | When an action is stopped |
+| "Switched off", "PIN entered wrong five times" | When it happens |
+| "Still here" | Once a day |
+| Removal notice | When the extension is removed (the browser opens the relay address) |
+
+The relay keeps alerts for 30 days and the trusted person's Telegram chat ID and first name while
+they are linked. It never receives addresses with paths, page content, typed text, card numbers or
+clipboard contents. Site names are written as `example[.]com` so Telegram does not turn them into
+clickable links. Unlinking in the settings deletes everything the relay keeps about the computer.
 
 ## What ScamFuse does not do
 
@@ -41,8 +56,9 @@ data on any server. The child sees the same log as the parent.
 | Access to all sites | The clipboard and fake alert checks must work on any page |
 | `downloads` | To pause, resume or cancel a dangerous download |
 | `storage` | Settings and the local log |
+| `alarms` | The daily "still here" signal and retries when there is no internet |
 
-## Later versions
+## Bank cards and screen sharing
 
-Version 0.2 adds an optional Telegram bot so the trusted person gets alerts automatically. It will
-receive only the alert itself (kind, site name, time) and will be documented here before release.
+The card check only notices that a card number is being typed; the number stays on the page.
+The screen sharing check only refuses the request; nothing is recorded.

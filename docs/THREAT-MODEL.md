@@ -13,6 +13,8 @@ and it sees only what happens inside the browser.
 - Fake virus alerts: alarm phrases (English and Russian), a "support" phone number, and trap
   behaviour such as full screen, keyboard lock, dialog loops and Back-button traps.
 - Executable downloads from unofficial sites (child profile).
+- Screen sharing requested by a site that is not a known meeting service.
+- Bank card numbers typed on a site (child profile).
 
 ## Not covered
 
@@ -20,8 +22,9 @@ and it sees only what happens inside the browser.
   installed.
 - Mobile browsers: they do not run extensions.
 - A person who removes the extension or opens another browser. Removal cannot be prevented by an
-  extension; version 0.2 tells the trusted person when it happens. On Chromebooks, Family Link can
-  block removal.
+  extension; with Telegram linked, the trusted person is told when it happens. Switching the
+  extension off in the browser is not reported by the browser, so the relay reports a computer
+  that is silent for 7 days. On Chromebooks, Family Link can block removal.
 - Commands typed by hand from a video or a phone call.
 - Archives: a program inside a `.zip` is not seen until it is unpacked outside the browser.
 

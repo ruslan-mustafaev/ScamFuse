@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+  <head><meta charset="utf-8" /><title>Remote support session</title></head>
+  <body>
+    <h1>Support session</h1>
+    <p>Press the button so our specialist can see your screen.</p>
+    <button id="share" type="button">Share screen</button>
+    <p id="result"></p>
+    <script>
+      document.getElementById('share').addEventListener('click', function () {
+        navigator.mediaDevices.getDisplayMedia({ video: true }).then(
+          function () { document.getElementById('result').textContent = 'sharing'; },
+          function (error) { document.getElementById('result').textContent = 'refused: ' + error.name; }
+        );
+      });
+    </script>
+  </body>
+</html>

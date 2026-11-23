@@ -8,6 +8,10 @@ cheat. ScamFuse watches for those steps, stops them before they happen and shows
 screen with one big button: **Ask Dad** (or whoever you set up). The button opens WhatsApp,
 Telegram or e-mail with a ready message. Nothing is sent by itself.
 
+With Telegram linked, the alert reaches the trusted person by itself. They press **Allow** or
+**Don't allow** on their phone, or reply with a few words, and the answer appears on the pause
+screen. They can also read out a one-time code by phone to unlock the action.
+
 It is made for parents and grandparents, for children and teenagers, and for yourself.
 
 [Try the demo](https://ruslan-mustafaev.github.io/ScamFuse/) · [Privacy](docs/PRIVACY.md) · [Limits](docs/THREAT-MODEL.md) · [Translate](docs/TRANSLATING.md)
@@ -19,7 +23,9 @@ It is made for parents and grandparents, for children and teenagers, and for you
 | A "bank employee" asks to install AnyDesk, TeamViewer and similar | Pauses the download and the program's site | All |
 | A fake "I am not a robot" check slips a command into the clipboard ("ClickFix") | Replaces the command with a harmless line and pauses the page | All |
 | A page pretends the computer is infected and shows a "support" number | Leaves the page, mutes it and pauses | All |
+| A "support specialist" asks to share the screen on an unknown site | Refuses the request and pauses; meeting services are not affected | All |
 | Cheats, mods and cracked games from unofficial sites | Pauses the download | Child |
+| Bank card details typed on a site | Pauses before the purchase | Child |
 
 Each check can be switched off in the settings. Official stores (Steam, Epic Games, Roblox,
 Microsoft, Apple, Google and others) are never stopped.
@@ -31,6 +37,19 @@ Microsoft, Apple, Google and others) are never stopped.
 
 The language follows the browser (English and Russian today) and can be switched on any screen.
 An optional PIN turns on the strict mode: a stopped action then waits for the PIN or for 30 minutes.
+Linking Telegram is one more step on the same screen: the trusted person scans a QR code with
+their phone.
+
+## Alerts in Telegram
+
+| What the trusted person gets | When |
+| --- | --- |
+| An alert with **Allow**, **Don't allow**, **Always allow this site** and a one-time unlock code | A dangerous action is stopped (any action in the strict mode, or when "Ask" is pressed) |
+| A notice | The extension is removed, protection is switched off, the PIN is entered wrong five times, or the computer is silent for 7 days |
+
+The relay behind the bot is a small Cloudflare Worker on the free plan: [relay/](relay/README.md).
+Without it, ScamFuse works the same and the "Ask" button opens WhatsApp, Telegram or e-mail with a
+ready message.
 
 ## Install
 
@@ -46,10 +65,10 @@ should work, but are not tested yet. Mobile browsers do not run extensions.
 
 ## Privacy in one paragraph
 
-All checks run on the computer. ScamFuse has no server in this version, no analytics and no
-remote code. It keeps a local log of what it stopped (time, kind, site name), visible in the
-settings. A message leaves the computer only when someone presses the button and sends it from
-their own messenger. Details: [docs/PRIVACY.md](docs/PRIVACY.md).
+All checks run on the computer, with no analytics and no remote code. It keeps a local log of
+what it stopped (time, kind, site name), visible in the settings. When Telegram is linked, an
+alert sends only the kind of action, the site name and the time to the relay, which passes it to
+the trusted person and deletes it after 30 days. Details: [docs/PRIVACY.md](docs/PRIVACY.md).
 
 ## Development
 
@@ -61,6 +80,7 @@ npm run check      # type check, unit tests, build into dist/
 npm run test:e2e   # Chromium with the extension walks through the demo scenarios
 npm run demo       # serves the demo pages at http://127.0.0.1:8080/
 npm run package    # release/scamfuse-<version>.zip
+node scripts/relay-local.mjs   # a relay on this computer with a simulated Telegram
 ```
 
 | Folder | What is inside |
@@ -71,6 +91,7 @@ npm run package    # release/scamfuse-<version>.zip
 | `extension/src/content` | Isolated script that scores what the hooks report |
 | `extension/src/pages` | Pause screen, setup, settings, toolbar window |
 | `extension/src/rules` | Lists of remote access tools, sites and scam phrases (JSON) |
+| `relay` | Alert relay for Telegram: Cloudflare Worker and D1 database |
 | `extension/public/_locales` | Translations |
 | `demo` | Safe imitations of the scams, published with GitHub Pages |
 | `tests` | Unit tests (`node:test`) and browser tests (Playwright) |
@@ -79,8 +100,8 @@ The build is bundled but not minified, so the code in the store package is reada
 
 ## Roadmap
 
-- **0.2** — Telegram bot: alerts reach the trusted person automatically, and they can allow or
-  block the action from their phone. Screen sharing and card number checks. Chrome Web Store.
+- **0.2** (this version) — Telegram alerts with answers, unlock codes, removal and silence notices,
+  screen sharing and card entry checks, reading the pause screen aloud. Next: Chrome Web Store.
 - **0.3** — Look-alike bank and game sites, "free game currency" pages, gift card scams,
   rule updates without a new release, Firefox, ten more languages.
 

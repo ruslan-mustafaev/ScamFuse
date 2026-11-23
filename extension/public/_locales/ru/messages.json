@@ -1,207 +1,735 @@
 {
-  "extName": { "message": "ScamFuse" },
-  "extDescription": { "message": "Ставит на паузу опасные действия, к которым подталкивают мошенники, и зовёт близкого человека." },
-  "actionTitle": { "message": "ScamFuse: защита" },
-
-  "lang_label": { "message": "Язык" },
-  "lang_auto": { "message": "Автоматически" },
-  "btn_back": { "message": "Назад" },
-  "btn_skip": { "message": "Пропустить" },
-  "btn_save": { "message": "Сохранить" },
-  "btn_add": { "message": "Добавить" },
-  "btn_remove": { "message": "Убрать" },
-  "btn_unlock": { "message": "Открыть" },
-  "saved": { "message": "Сохранено" },
-
-  "profile_elder": { "message": "Маму, папу, бабушку или дедушку" },
-  "profile_elder_hint": { "message": "Останавливает удалённый доступ, поддельные вирусные тревоги и опасные команды." },
-  "profile_child": { "message": "Ребёнка или подростка" },
-  "profile_child_hint": { "message": "Ещё спрашивает перед установкой программ с неофициальных сайтов." },
-  "profile_self": { "message": "Себя" },
-  "profile_self_hint": { "message": "Только предупреждения. Решаете вы." },
-
-  "welcome_step": { "message": "Шаг {step} из 2" },
-  "welcome_title": { "message": "Кого защищаем?" },
-  "welcome_subtitle": { "message": "Выберите одно. Позже можно изменить." },
-  "contact_title": { "message": "Кого спросить, если что-то не так?" },
-  "contact_title__self": { "message": "Кого вы можете спросить в трудный момент?" },
-  "contact_subtitle": { "message": "Когда ScamFuse что-то остановит, на экране паузы будет кнопка, которая открывает чат с этим человеком. Само ничего не отправляется." },
-  "contact_subtitle__self": { "message": "Необязательно. Можно добавить позже в настройках." },
-  "field_who": { "message": "Кого спросить" },
-  "field_who_placeholder": { "message": "например, папу или Анну" },
-  "field_who_hint": { "message": "Как будет на кнопке: «Спросить папу»." },
-  "field_phone": { "message": "Его или её номер телефона" },
-  "field_phone_placeholder": { "message": "+7 900 123-45-67" },
-  "field_email": { "message": "Его или её e-mail" },
-  "field_email_placeholder": { "message": "name@example.com" },
-  "field_channel": { "message": "Писать через" },
-  "channel_whatsapp": { "message": "WhatsApp" },
-  "channel_telegram": { "message": "Telegram" },
-  "channel_email": { "message": "E-mail" },
-  "field_pin": { "message": "ПИН для разблокировки (знаете только вы)" },
-  "field_pin_placeholder": { "message": "4–6 цифр, необязательно" },
-  "pin_hint_none": { "message": "Без ПИН-кода кнопка «Продолжить всё равно» откроется через 15 секунд." },
-  "pin_hint_set": { "message": "С ПИН-кодом остановленное действие ждёт ваш ПИН или 30 минут." },
-  "btn_enable": { "message": "Включить защиту" },
-  "err_who": { "message": "Напишите, кого спросить." },
-  "err_phone": { "message": "Введите номер с кодом страны, например +7 900 123-45-67." },
-  "err_email": { "message": "Введите правильный адрес e-mail." },
-  "err_pin": { "message": "ПИН — от 4 до 6 цифр." },
-  "done_title": { "message": "Защита включена" },
-  "done_point_stop": { "message": "Если сайт попытается сделать что-то опасное, ScamFuse остановит это и покажет экран паузы." },
-  "done_point_ask": { "message": "На этом экране есть кнопка «Спросить {name}»." },
-  "done_point_ask_none": { "message": "Кого спросить, можно добавить позже в настройках." },
-  "done_point_private": { "message": "ScamFuse ничего не отправляет сам и не собирает историю посещений." },
-  "done_show": { "message": "Покажите этот экран тому, кого защищаете, чтобы он знал, что значит экран паузы." },
-  "done_pin_icon": { "message": "Совет: закрепите значок. Нажмите на значок пазла рядом с адресной строкой, затем на булавку рядом с ScamFuse." },
-  "btn_try_demo": { "message": "Попробовать на демо-странице" },
-  "btn_open_settings": { "message": "Настройки" },
-
-  "pause_title": { "message": "Стоп. Давайте проверим." },
-  "what_remote_site": { "message": "Этот сайт предлагает программу, через которую посторонний человек сможет управлять вашим компьютером." },
-  "what_remote_download": { "message": "Вы скачиваете программу, через которую посторонний человек сможет управлять вашим компьютером." },
-  "what_clipboard": { "message": "Этот сайт пытался подложить вам команду для компьютера. Мы её убрали." },
-  "what_clipboard__child": { "message": "Этот сайт хотел, чтобы ты вставил команду в компьютер. Так крадут аккаунты. Мы её убрали." },
-  "what_fake_alert": { "message": "Эта страница делает вид, что компьютер заражён. Это обман." },
-  "what_program_download": { "message": "Вы скачиваете программу с неофициального сайта." },
-  "what_program_download__child": { "message": "Программы с неофициальных сайтов часто крадут игровые аккаунты и пароли." },
-  "rule_remote_site": { "message": "Банк, полиция и служба поддержки никогда не просят ставить такие программы." },
-  "rule_remote_download": { "message": "Банк, полиция и служба поддержки никогда не просят ставить такие программы." },
-  "rule_clipboard": { "message": "Настоящие сайты никогда не просят вставлять команды в Windows или Терминал." },
-  "rule_fake_alert": { "message": "Microsoft, Apple и ваш банк никогда не показывают такие страницы и не просят позвонить." },
-  "rule_program_download": { "message": "Если об этом попросил незнакомый человек, остановитесь." },
-  "rule_program_download__child": { "message": "Программы ставим вместе с родителями." },
-  "btn_ask": { "message": "Спросить {name}" },
-  "btn_ask_generic": { "message": "Спросить близкого человека" },
-  "ask_via": { "message": "Откроет {channel} с готовым сообщением." },
-  "ask_missing": { "message": "Пока некого спросить. Добавьте человека в настройках." },
-  "call_line": { "message": "Или позвоните: {phone}" },
-  "btn_close": { "message": "Закрыть страницу" },
-  "btn_close_download": { "message": "Отменить загрузку" },
-  "continue_wait": { "message": "Продолжить всё равно через {seconds} с" },
-  "continue_now": { "message": "Продолжить всё равно" },
-  "continue_strict": { "message": "Заблокировано до {time}. Введите ПИН, чтобы открыть сейчас." },
-  "field_pin_short": { "message": "ПИН" },
-  "pin_wrong": { "message": "Неверный ПИН. Осталось попыток: {count}." },
-  "pin_locked": { "message": "Слишком много попыток. Попробуйте после {time}." },
-  "done_allowed": { "message": "Разрешено на 30 минут. Возвращаемся…" },
-  "done_blocked": { "message": "Остановлено. Вы в безопасности." },
-  "expired_title": { "message": "Эта пауза закончилась" },
-  "expired_text": { "message": "Вкладку можно закрыть." },
-  "details": { "message": "Почему остановлено?" },
-  "details_site": { "message": "Сайт: {host}" },
-
-  "reason_powershell": { "message": "Команда PowerShell" },
-  "reason_cmd": { "message": "Команда для командной строки Windows" },
-  "reason_mshta": { "message": "Команда, которая запускает программу из интернета" },
-  "reason_pipe_to_shell": { "message": "Команда, которая скачивает и запускает скрипт" },
-  "reason_shell_c": { "message": "Команда для системной оболочки" },
-  "reason_osascript": { "message": "Команда для скриптов macOS" },
-  "reason_msiexec": { "message": "Команда, которая устанавливает программу" },
-  "reason_download_run": { "message": "Команда, которая скачивает и запускает код" },
-  "reason_encoded": { "message": "Скрытая зашифрованная команда" },
-  "reason_hidden_window": { "message": "Команда, которая работает в скрытом окне" },
-  "reason_system_tool": { "message": "Инструмент Windows, которым часто пользуются злоумышленники" },
-  "reason_base64_decode": { "message": "Команда, которая распаковывает скрытый код" },
-  "reason_download_api": { "message": "Команда, которая скачивает файлы" },
-  "reason_unix_exec_prep": { "message": "Команда, которая делает файл запускаемым" },
-  "reason_network_address": { "message": "Адрес в интернете внутри команды" },
-  "reason_fake_verification_comment": { "message": "Поддельная пометка «Я не робот» внутри команды" },
-  "reason_hidden_padding": { "message": "Пробелы, которые прячут часть команды" },
-  "reason_hidden_write": { "message": "Сайт скопировал текст тайно" },
-  "reason_run_instructions": { "message": "Страница просит нажать Win+R или открыть Терминал" },
-  "reason_fake_captcha": { "message": "Поддельная проверка «Я не робот»" },
-  "reason_support_number": { "message": "Номер телефона «службы поддержки»" },
-  "reason_fullscreen": { "message": "Страница захватила весь экран" },
-  "reason_keyboard_lock": { "message": "Страница пыталась заблокировать клавиатуру" },
-  "reason_dialog_loop": { "message": "Страница открывала окна предупреждений снова и снова" },
-  "reason_history_trap": { "message": "Страница блокирует кнопку «Назад»" },
-  "reason_words": { "message": "Типичные фразы мошенников" },
-  "reason_remote_tool": { "message": "Программа удалённого доступа" },
-  "reason_remote_site": { "message": "Сайт программы удалённого доступа" },
-  "reason_unofficial_program": { "message": "Программа с неофициального сайта" },
-
-  "kind_remote_site": { "message": "Сайт удалённого доступа" },
-  "kind_remote_download": { "message": "Программа удалённого доступа" },
-  "kind_clipboard": { "message": "Команда в буфере обмена" },
-  "kind_fake_alert": { "message": "Поддельная вирусная тревога" },
-  "kind_program_download": { "message": "Загрузка программы" },
-
-  "msg_subject": { "message": "ScamFuse: нужна проверка" },
-  "msg_intro": { "message": "Привет! ScamFuse остановил подозрительное действие на моём компьютере." },
-  "msg_intro_page": { "message": "Привет! Проверь, пожалуйста, этот сайт." },
-  "msg_what": { "message": "Что: {what}" },
-  "msgwhat_remote_site": { "message": "сайт программы удалённого доступа" },
-  "msgwhat_remote_download": { "message": "попытка установить программу удалённого доступа" },
-  "msgwhat_clipboard": { "message": "сайт подложил команду в буфер обмена" },
-  "msgwhat_fake_alert": { "message": "поддельная вирусная тревога" },
-  "msgwhat_program_download": { "message": "программа с неофициального сайта" },
-  "msg_site": { "message": "Сайт: {host}" },
-  "msg_page_title": { "message": "Страница: {title}" },
-  "msg_time": { "message": "Время: {time}" },
-  "msg_ask": { "message": "Позвони мне, пожалуйста." },
-
+  "extName": {
+    "message": "ScamFuse"
+  },
+  "extDescription": {
+    "message": "Ставит на паузу опасные действия, к которым подталкивают мошенники, и зовёт близкого человека."
+  },
+  "actionTitle": {
+    "message": "ScamFuse: защита"
+  },
+  "lang_label": {
+    "message": "Язык"
+  },
+  "lang_auto": {
+    "message": "Автоматически"
+  },
+  "btn_back": {
+    "message": "Назад"
+  },
+  "btn_skip": {
+    "message": "Пропустить"
+  },
+  "btn_save": {
+    "message": "Сохранить"
+  },
+  "btn_add": {
+    "message": "Добавить"
+  },
+  "btn_remove": {
+    "message": "Убрать"
+  },
+  "btn_unlock": {
+    "message": "Открыть"
+  },
+  "saved": {
+    "message": "Сохранено"
+  },
+  "profile_elder": {
+    "message": "Маму, папу, бабушку или дедушку"
+  },
+  "profile_elder_hint": {
+    "message": "Останавливает удалённый доступ, поддельные вирусные тревоги и опасные команды."
+  },
+  "profile_child": {
+    "message": "Ребёнка или подростка"
+  },
+  "profile_child_hint": {
+    "message": "Ещё спрашивает перед установкой программ с неофициальных сайтов."
+  },
+  "profile_self": {
+    "message": "Себя"
+  },
+  "profile_self_hint": {
+    "message": "Только предупреждения. Решаете вы."
+  },
+  "welcome_step": {
+    "message": "Шаг {step} из 2"
+  },
+  "welcome_title": {
+    "message": "Кого защищаем?"
+  },
+  "welcome_subtitle": {
+    "message": "Выберите одно. Позже можно изменить."
+  },
+  "contact_title": {
+    "message": "Кого спросить, если что-то не так?"
+  },
+  "contact_title__self": {
+    "message": "Кого вы можете спросить в трудный момент?"
+  },
+  "contact_subtitle": {
+    "message": "Когда ScamFuse что-то остановит, на экране паузы будет кнопка, которая открывает чат с этим человеком. Само ничего не отправляется."
+  },
+  "contact_subtitle__self": {
+    "message": "Необязательно. Можно добавить позже в настройках."
+  },
+  "field_who": {
+    "message": "Кого спросить"
+  },
+  "field_who_placeholder": {
+    "message": "например, папу или Анну"
+  },
+  "field_who_hint": {
+    "message": "Как будет на кнопке: «Спросить папу»."
+  },
+  "field_phone": {
+    "message": "Его или её номер телефона"
+  },
+  "field_phone_placeholder": {
+    "message": "+7 900 123-45-67"
+  },
+  "field_email": {
+    "message": "Его или её e-mail"
+  },
+  "field_email_placeholder": {
+    "message": "name@example.com"
+  },
+  "field_channel": {
+    "message": "Писать через"
+  },
+  "channel_whatsapp": {
+    "message": "WhatsApp"
+  },
+  "channel_telegram": {
+    "message": "Telegram"
+  },
+  "channel_email": {
+    "message": "E-mail"
+  },
+  "field_pin": {
+    "message": "ПИН для разблокировки (знаете только вы)"
+  },
+  "field_pin_placeholder": {
+    "message": "4–6 цифр, необязательно"
+  },
+  "pin_hint_none": {
+    "message": "Без ПИН-кода кнопка «Продолжить всё равно» откроется через 15 секунд."
+  },
+  "pin_hint_set": {
+    "message": "С ПИН-кодом остановленное действие ждёт ваш ПИН или 30 минут."
+  },
+  "btn_enable": {
+    "message": "Включить защиту"
+  },
+  "err_who": {
+    "message": "Напишите, кого спросить."
+  },
+  "err_phone": {
+    "message": "Введите номер с кодом страны, например +7 900 123-45-67."
+  },
+  "err_email": {
+    "message": "Введите правильный адрес e-mail."
+  },
+  "err_pin": {
+    "message": "ПИН — от 4 до 6 цифр."
+  },
+  "done_title": {
+    "message": "Защита включена"
+  },
+  "done_point_stop": {
+    "message": "Если сайт попытается сделать что-то опасное, ScamFuse остановит это и покажет экран паузы."
+  },
+  "done_point_ask": {
+    "message": "На этом экране есть кнопка «Спросить {name}»."
+  },
+  "done_point_ask_none": {
+    "message": "Кого спросить, можно добавить позже в настройках."
+  },
+  "done_point_private": {
+    "message": "ScamFuse ничего не отправляет сам и не собирает историю посещений."
+  },
+  "done_show": {
+    "message": "Покажите этот экран тому, кого защищаете, чтобы он знал, что значит экран паузы."
+  },
+  "done_pin_icon": {
+    "message": "Совет: закрепите значок. Нажмите на значок пазла рядом с адресной строкой, затем на булавку рядом с ScamFuse."
+  },
+  "btn_try_demo": {
+    "message": "Попробовать на демо-странице"
+  },
+  "btn_open_settings": {
+    "message": "Настройки"
+  },
+  "pause_title": {
+    "message": "Стоп. Давайте проверим."
+  },
+  "what_remote_site": {
+    "message": "Этот сайт предлагает программу, через которую посторонний человек сможет управлять вашим компьютером."
+  },
+  "what_remote_download": {
+    "message": "Вы скачиваете программу, через которую посторонний человек сможет управлять вашим компьютером."
+  },
+  "what_clipboard": {
+    "message": "Этот сайт пытался подложить вам команду для компьютера. Мы её убрали."
+  },
+  "what_clipboard__child": {
+    "message": "Этот сайт хотел, чтобы ты вставил команду в компьютер. Так крадут аккаунты. Мы её убрали."
+  },
+  "what_fake_alert": {
+    "message": "Эта страница делает вид, что компьютер заражён. Это обман."
+  },
+  "what_program_download": {
+    "message": "Вы скачиваете программу с неофициального сайта."
+  },
+  "what_program_download__child": {
+    "message": "Программы с неофициальных сайтов часто крадут игровые аккаунты и пароли."
+  },
+  "rule_remote_site": {
+    "message": "Банк, полиция и служба поддержки никогда не просят ставить такие программы."
+  },
+  "rule_remote_download": {
+    "message": "Банк, полиция и служба поддержки никогда не просят ставить такие программы."
+  },
+  "rule_clipboard": {
+    "message": "Настоящие сайты никогда не просят вставлять команды в Windows или Терминал."
+  },
+  "rule_fake_alert": {
+    "message": "Microsoft, Apple и ваш банк никогда не показывают такие страницы и не просят позвонить."
+  },
+  "rule_program_download": {
+    "message": "Если об этом попросил незнакомый человек, остановитесь."
+  },
+  "rule_program_download__child": {
+    "message": "Программы ставим вместе с родителями."
+  },
+  "btn_ask": {
+    "message": "Спросить {name}"
+  },
+  "btn_ask_generic": {
+    "message": "Спросить близкого человека"
+  },
+  "ask_via": {
+    "message": "Откроет {channel} с готовым сообщением."
+  },
+  "ask_missing": {
+    "message": "Пока некого спросить. Добавьте человека в настройках."
+  },
+  "call_line": {
+    "message": "Или позвоните: {phone}"
+  },
+  "btn_close": {
+    "message": "Закрыть страницу"
+  },
+  "btn_close_download": {
+    "message": "Отменить загрузку"
+  },
+  "continue_wait": {
+    "message": "Продолжить всё равно через {seconds} с"
+  },
+  "continue_now": {
+    "message": "Продолжить всё равно"
+  },
+  "continue_strict": {
+    "message": "Заблокировано до {time}. Введите ПИН, чтобы открыть сейчас."
+  },
+  "field_pin_short": {
+    "message": "ПИН"
+  },
+  "pin_wrong": {
+    "message": "Неверный ПИН. Осталось попыток: {count}."
+  },
+  "pin_locked": {
+    "message": "Слишком много попыток. Попробуйте после {time}."
+  },
+  "done_allowed": {
+    "message": "Разрешено на 30 минут. Возвращаемся…"
+  },
+  "done_blocked": {
+    "message": "Остановлено. Вы в безопасности."
+  },
+  "expired_title": {
+    "message": "Эта пауза закончилась"
+  },
+  "expired_text": {
+    "message": "Вкладку можно закрыть."
+  },
+  "details": {
+    "message": "Почему остановлено?"
+  },
+  "details_site": {
+    "message": "Сайт: {host}"
+  },
+  "reason_powershell": {
+    "message": "Команда PowerShell"
+  },
+  "reason_cmd": {
+    "message": "Команда для командной строки Windows"
+  },
+  "reason_mshta": {
+    "message": "Команда, которая запускает программу из интернета"
+  },
+  "reason_pipe_to_shell": {
+    "message": "Команда, которая скачивает и запускает скрипт"
+  },
+  "reason_shell_c": {
+    "message": "Команда для системной оболочки"
+  },
+  "reason_osascript": {
+    "message": "Команда для скриптов macOS"
+  },
+  "reason_msiexec": {
+    "message": "Команда, которая устанавливает программу"
+  },
+  "reason_download_run": {
+    "message": "Команда, которая скачивает и запускает код"
+  },
+  "reason_encoded": {
+    "message": "Скрытая зашифрованная команда"
+  },
+  "reason_hidden_window": {
+    "message": "Команда, которая работает в скрытом окне"
+  },
+  "reason_system_tool": {
+    "message": "Инструмент Windows, которым часто пользуются злоумышленники"
+  },
+  "reason_base64_decode": {
+    "message": "Команда, которая распаковывает скрытый код"
+  },
+  "reason_download_api": {
+    "message": "Команда, которая скачивает файлы"
+  },
+  "reason_unix_exec_prep": {
+    "message": "Команда, которая делает файл запускаемым"
+  },
+  "reason_network_address": {
+    "message": "Адрес в интернете внутри команды"
+  },
+  "reason_fake_verification_comment": {
+    "message": "Поддельная пометка «Я не робот» внутри команды"
+  },
+  "reason_hidden_padding": {
+    "message": "Пробелы, которые прячут часть команды"
+  },
+  "reason_hidden_write": {
+    "message": "Сайт скопировал текст тайно"
+  },
+  "reason_run_instructions": {
+    "message": "Страница просит нажать Win+R или открыть Терминал"
+  },
+  "reason_fake_captcha": {
+    "message": "Поддельная проверка «Я не робот»"
+  },
+  "reason_support_number": {
+    "message": "Номер телефона «службы поддержки»"
+  },
+  "reason_fullscreen": {
+    "message": "Страница захватила весь экран"
+  },
+  "reason_keyboard_lock": {
+    "message": "Страница пыталась заблокировать клавиатуру"
+  },
+  "reason_dialog_loop": {
+    "message": "Страница открывала окна предупреждений снова и снова"
+  },
+  "reason_history_trap": {
+    "message": "Страница блокирует кнопку «Назад»"
+  },
+  "reason_words": {
+    "message": "Типичные фразы мошенников"
+  },
+  "reason_remote_tool": {
+    "message": "Программа удалённого доступа"
+  },
+  "reason_remote_site": {
+    "message": "Сайт программы удалённого доступа"
+  },
+  "reason_unofficial_program": {
+    "message": "Программа с неофициального сайта"
+  },
+  "kind_remote_site": {
+    "message": "Сайт удалённого доступа"
+  },
+  "kind_remote_download": {
+    "message": "Программа удалённого доступа"
+  },
+  "kind_clipboard": {
+    "message": "Команда в буфере обмена"
+  },
+  "kind_fake_alert": {
+    "message": "Поддельная вирусная тревога"
+  },
+  "kind_program_download": {
+    "message": "Загрузка программы"
+  },
+  "msg_subject": {
+    "message": "ScamFuse: нужна проверка"
+  },
+  "msg_intro": {
+    "message": "Привет! ScamFuse остановил подозрительное действие на моём компьютере."
+  },
+  "msg_intro_page": {
+    "message": "Привет! Проверь, пожалуйста, этот сайт."
+  },
+  "msg_what": {
+    "message": "Что: {what}"
+  },
+  "msgwhat_remote_site": {
+    "message": "сайт программы удалённого доступа"
+  },
+  "msgwhat_remote_download": {
+    "message": "попытка установить программу удалённого доступа"
+  },
+  "msgwhat_clipboard": {
+    "message": "сайт подложил команду в буфер обмена"
+  },
+  "msgwhat_fake_alert": {
+    "message": "поддельная вирусная тревога"
+  },
+  "msgwhat_program_download": {
+    "message": "программа с неофициального сайта"
+  },
+  "msg_site": {
+    "message": "Сайт: {host}"
+  },
+  "msg_page_title": {
+    "message": "Страница: {title}"
+  },
+  "msg_time": {
+    "message": "Время: {time}"
+  },
+  "msg_ask": {
+    "message": "Позвони мне, пожалуйста."
+  },
   "clip_safe": {
     "message": "# ScamFuse убрал отсюда опасную команду. Не запускайте то, что сайт просил вставить.",
     "description": "Подменяет вредную команду в буфере. Должна начинаться с # и не содержать кавычек, | & < > и $."
   },
-
-  "popup_on": { "message": "Защита включена" },
-  "popup_off": { "message": "Защита выключена" },
-  "popup_setup_needed": { "message": "Настройка не завершена" },
-  "btn_finish_setup": { "message": "Завершить настройку" },
-  "popup_today": { "message": "Остановлено сегодня: {count}" },
-  "popup_ask_page": { "message": "Спросить {name} об этой странице" },
-  "popup_settings": { "message": "Настройки" },
-  "popup_recent": { "message": "Последние события" },
-  "popup_none": { "message": "Пока ничего подозрительного." },
-  "popup_demo": { "message": "Демо-страница" },
-
-  "opt_title": { "message": "Настройки ScamFuse" },
-  "opt_locked_title": { "message": "Введите ПИН" },
-  "opt_locked_text": { "message": "Настройки защищены ПИН-кодом." },
-  "opt_enabled": { "message": "Защита включена" },
-  "opt_section_people": { "message": "Кого спросить" },
-  "opt_section_protection": { "message": "Защита" },
-  "opt_profile": { "message": "Кого защищаем" },
-  "opt_mode": { "message": "Когда что-то остановлено" },
-  "mode_advice": { "message": "Совет: «Продолжить всё равно» откроется через 15 секунд" },
-  "mode_strict": { "message": "Строгий: ждёт ПИН или окончания блокировки" },
-  "mode_strict_needs_pin": { "message": "Чтобы включить строгий режим, задайте ПИН." },
-  "opt_lock_minutes": { "message": "Время блокировки в строгом режиме, минут" },
-  "opt_pin": { "message": "ПИН" },
-  "opt_pin_on": { "message": "ПИН задан." },
-  "opt_pin_none": { "message": "ПИН не задан." },
-  "opt_pin_new": { "message": "Новый ПИН (4–6 цифр)" },
-  "btn_set_pin": { "message": "Сохранить ПИН" },
-  "btn_remove_pin": { "message": "Убрать ПИН" },
-  "opt_section_detectors": { "message": "Что останавливать" },
-  "det_remoteAccess": { "message": "Программы удалённого доступа" },
-  "det_remoteAccess_hint": { "message": "AnyDesk, TeamViewer и похожие: самое частое начало «банковского» обмана." },
-  "det_clipboard": { "message": "Команды, подложенные в буфер обмена" },
-  "det_clipboard_hint": { "message": "Поддельные проверки «Я не робот», которые просят вставить команду." },
-  "det_fakeAlert": { "message": "Поддельные вирусные тревоги" },
-  "det_fakeAlert_hint": { "message": "Страницы, которые блокируют экран и просят позвонить в «поддержку»." },
-  "det_programDownload": { "message": "Программы с неофициальных сайтов" },
-  "det_programDownload_hint": { "message": "Читы, моды и «взломанные» игры. Официальные магазины не затрагиваются." },
-  "opt_section_sites": { "message": "Доверенные сайты" },
-  "opt_sites_hint": { "message": "На этих сайтах ScamFuse ничего не останавливает." },
-  "opt_site_placeholder": { "message": "example.com" },
-  "opt_sites_empty": { "message": "Доверенных сайтов нет." },
-  "err_site": { "message": "Введите адрес сайта, например example.com." },
-  "opt_section_log": { "message": "Что было остановлено" },
-  "log_empty": { "message": "Пока ничего." },
-  "log_time": { "message": "Время" },
-  "log_what": { "message": "Что" },
-  "log_site": { "message": "Сайт" },
-  "log_result": { "message": "Итог" },
-  "outcome_allowed": { "message": "Разрешено" },
-  "outcome_blocked": { "message": "Остановлено" },
-  "outcome_pending": { "message": "Ждёт решения" },
-  "btn_clear_log": { "message": "Очистить журнал" },
-  "opt_section_about": { "message": "О расширении" },
-  "about_text": { "message": "Открытый исходный код. Журнал хранится только на этом компьютере. Сообщения отправляются, только когда человек сам нажимает кнопку." },
-  "about_source": { "message": "Исходный код" },
-  "about_version": { "message": "Версия {version}" },
-  "btn_rerun_setup": { "message": "Пройти настройку заново" }
+  "popup_on": {
+    "message": "Защита включена"
+  },
+  "popup_off": {
+    "message": "Защита выключена"
+  },
+  "popup_setup_needed": {
+    "message": "Настройка не завершена"
+  },
+  "btn_finish_setup": {
+    "message": "Завершить настройку"
+  },
+  "popup_today": {
+    "message": "Остановлено сегодня: {count}"
+  },
+  "popup_ask_page": {
+    "message": "Спросить {name} об этой странице"
+  },
+  "popup_settings": {
+    "message": "Настройки"
+  },
+  "popup_recent": {
+    "message": "Последние события"
+  },
+  "popup_none": {
+    "message": "Пока ничего подозрительного."
+  },
+  "popup_demo": {
+    "message": "Демо-страница"
+  },
+  "opt_title": {
+    "message": "Настройки ScamFuse"
+  },
+  "opt_locked_title": {
+    "message": "Введите ПИН"
+  },
+  "opt_locked_text": {
+    "message": "Настройки защищены ПИН-кодом."
+  },
+  "opt_enabled": {
+    "message": "Защита включена"
+  },
+  "opt_section_people": {
+    "message": "Кого спросить"
+  },
+  "opt_section_protection": {
+    "message": "Защита"
+  },
+  "opt_profile": {
+    "message": "Кого защищаем"
+  },
+  "opt_mode": {
+    "message": "Когда что-то остановлено"
+  },
+  "mode_advice": {
+    "message": "Совет: «Продолжить всё равно» откроется через 15 секунд"
+  },
+  "mode_strict": {
+    "message": "Строгий: ждёт ПИН или окончания блокировки"
+  },
+  "mode_strict_needs_pin": {
+    "message": "Чтобы включить строгий режим, задайте ПИН."
+  },
+  "opt_lock_minutes": {
+    "message": "Время блокировки в строгом режиме, минут"
+  },
+  "opt_pin": {
+    "message": "ПИН"
+  },
+  "opt_pin_on": {
+    "message": "ПИН задан."
+  },
+  "opt_pin_none": {
+    "message": "ПИН не задан."
+  },
+  "opt_pin_new": {
+    "message": "Новый ПИН (4–6 цифр)"
+  },
+  "btn_set_pin": {
+    "message": "Сохранить ПИН"
+  },
+  "btn_remove_pin": {
+    "message": "Убрать ПИН"
+  },
+  "opt_section_detectors": {
+    "message": "Что останавливать"
+  },
+  "det_remoteAccess": {
+    "message": "Программы удалённого доступа"
+  },
+  "det_remoteAccess_hint": {
+    "message": "AnyDesk, TeamViewer и похожие: самое частое начало «банковского» обмана."
+  },
+  "det_clipboard": {
+    "message": "Команды, подложенные в буфер обмена"
+  },
+  "det_clipboard_hint": {
+    "message": "Поддельные проверки «Я не робот», которые просят вставить команду."
+  },
+  "det_fakeAlert": {
+    "message": "Поддельные вирусные тревоги"
+  },
+  "det_fakeAlert_hint": {
+    "message": "Страницы, которые блокируют экран и просят позвонить в «поддержку»."
+  },
+  "det_programDownload": {
+    "message": "Программы с неофициальных сайтов"
+  },
+  "det_programDownload_hint": {
+    "message": "Читы, моды и «взломанные» игры. Официальные магазины не затрагиваются."
+  },
+  "opt_section_sites": {
+    "message": "Доверенные сайты"
+  },
+  "opt_sites_hint": {
+    "message": "На этих сайтах ScamFuse ничего не останавливает."
+  },
+  "opt_site_placeholder": {
+    "message": "example.com"
+  },
+  "opt_sites_empty": {
+    "message": "Доверенных сайтов нет."
+  },
+  "err_site": {
+    "message": "Введите адрес сайта, например example.com."
+  },
+  "opt_section_log": {
+    "message": "Что было остановлено"
+  },
+  "log_empty": {
+    "message": "Пока ничего."
+  },
+  "log_time": {
+    "message": "Время"
+  },
+  "log_what": {
+    "message": "Что"
+  },
+  "log_site": {
+    "message": "Сайт"
+  },
+  "log_result": {
+    "message": "Итог"
+  },
+  "outcome_allowed": {
+    "message": "Разрешено"
+  },
+  "outcome_blocked": {
+    "message": "Остановлено"
+  },
+  "outcome_pending": {
+    "message": "Ждёт решения"
+  },
+  "btn_clear_log": {
+    "message": "Очистить журнал"
+  },
+  "opt_section_about": {
+    "message": "О расширении"
+  },
+  "about_text": {
+    "message": "Открытый исходный код. Журнал хранится только на этом компьютере. Сообщения отправляются, только когда человек сам нажимает кнопку."
+  },
+  "about_source": {
+    "message": "Исходный код"
+  },
+  "about_version": {
+    "message": "Версия {version}"
+  },
+  "btn_rerun_setup": {
+    "message": "Пройти настройку заново"
+  },
+  "relay_sending": {
+    "message": "Отправляем сообщение: {names}…"
+  },
+  "relay_sent": {
+    "message": "Сообщение отправлено: {names}. Ждём ответа…"
+  },
+  "relay_queued": {
+    "message": "Нет интернета. Сообщение уйдёт, как только появится связь."
+  },
+  "relay_reply": {
+    "message": "{name}: «{text}»"
+  },
+  "relay_allowed": {
+    "message": "{name}: разрешено. Возвращаемся…"
+  },
+  "relay_blocked": {
+    "message": "{name}: не разрешено. Страницу можно закрыть."
+  },
+  "ask_via_telegram": {
+    "message": "Отправит тревогу в Telegram."
+  },
+  "btn_asked": {
+    "message": "Сообщение отправлено"
+  },
+  "field_code": {
+    "message": "Код от близкого"
+  },
+  "code_hint": {
+    "message": "У близкого в Telegram есть 6-значный код. Если он решит, что всё в порядке, он продиктует его по телефону."
+  },
+  "code_wrong": {
+    "message": "Неверный код. Осталось попыток: {count}."
+  },
+  "kind_screen_share": {
+    "message": "Показ экрана"
+  },
+  "kind_card_entry": {
+    "message": "Ввод банковской карты"
+  },
+  "what_screen_share": {
+    "message": "Этот сайт просит показать ваш экран. Посторонний увидит пароли и коды из банка."
+  },
+  "what_card_entry": {
+    "message": "Этот сайт просит данные банковской карты."
+  },
+  "what_card_entry__child": {
+    "message": "Сайт просит данные банковской карты. Покупки — вместе с родителями."
+  },
+  "rule_screen_share": {
+    "message": "Банк и служба поддержки никогда не просят показать экран."
+  },
+  "rule_card_entry": {
+    "message": "Если кто-то попросил оплатить или «подтвердить» карту, остановитесь и позвоните."
+  },
+  "rule_card_entry__child": {
+    "message": "Сначала спроси родителей."
+  },
+  "msgwhat_screen_share": {
+    "message": "сайт просит показать экран"
+  },
+  "msgwhat_card_entry": {
+    "message": "сайт просит данные банковской карты"
+  },
+  "reason_screen_share": {
+    "message": "Сайт попросил показать экран"
+  },
+  "reason_card_field": {
+    "message": "Поле для номера карты"
+  },
+  "reason_card_number": {
+    "message": "Введён номер банковской карты"
+  },
+  "det_screenShare": {
+    "message": "Показ экрана незнакомым сайтам"
+  },
+  "det_screenShare_hint": {
+    "message": "Zoom, Google Meet, Teams и другие сервисы встреч не затрагиваются."
+  },
+  "det_cardEntry": {
+    "message": "Ввод банковской карты"
+  },
+  "det_cardEntry_hint": {
+    "message": "Спрашивает перед любой покупкой. Полезно для детей."
+  },
+  "tg_title": {
+    "message": "Тревоги в Telegram"
+  },
+  "tg_text": {
+    "message": "Подключите Telegram близкого: тревоги будут приходить сами, а разрешить или запретить действие можно прямо с телефона."
+  },
+  "btn_tg_connect": {
+    "message": "Подключить Telegram"
+  },
+  "tg_scan": {
+    "message": "Отсканируйте этот код камерой телефона того, кто будет получать тревоги."
+  },
+  "tg_or_code": {
+    "message": "Или откройте @{bot} в Telegram и отправьте код {code}"
+  },
+  "tg_waiting": {
+    "message": "Ждём подключения… Код действует 10 минут."
+  },
+  "tg_expired": {
+    "message": "Срок кода истёк."
+  },
+  "btn_tg_new_code": {
+    "message": "Получить новый код"
+  },
+  "tg_linked": {
+    "message": "Подключено: {names}"
+  },
+  "btn_tg_test": {
+    "message": "Отправить пробную тревогу"
+  },
+  "tg_test_sent": {
+    "message": "Пробная тревога отправлена."
+  },
+  "btn_tg_add": {
+    "message": "Подключить ещё одного человека"
+  },
+  "btn_tg_unlink": {
+    "message": "Отключить Telegram"
+  },
+  "tg_error": {
+    "message": "Сервер тревог недоступен. Проверьте интернет и попробуйте снова."
+  },
+  "tg_limit": {
+    "message": "Уже подключены три человека."
+  },
+  "field_install_name": {
+    "message": "Как подписывать тревоги"
+  },
+  "field_install_name_placeholder": {
+    "message": "например, Мама, ноутбук"
+  },
+  "opt_relay_url": {
+    "message": "Адрес сервера тревог"
+  },
+  "opt_relay_hint": {
+    "message": "Не меняйте, если у вас нет своего сервера."
+  },
+  "opt_relay_none": {
+    "message": "Сервер тревог не задан. Сообщения отправляются только кнопкой «Спросить»."
+  },
+  "err_relay_url": {
+    "message": "Введите адрес, который начинается с https://."
+  },
+  "opt_voice": {
+    "message": "Читать экран паузы вслух"
+  },
+  "opt_voice_hint": {
+    "message": "Браузер прочитает предупреждение своим голосом."
+  },
+  "popup_tg": {
+    "message": "Тревоги получает: {names}"
+  }
 }

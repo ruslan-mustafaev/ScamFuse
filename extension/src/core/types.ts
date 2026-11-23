@@ -3,18 +3,26 @@
 export type Profile = 'elder' | 'child' | 'self';
 export type Mode = 'advice' | 'strict';
 export type Channel = 'whatsapp' | 'telegram' | 'email';
-export type DetectorId = 'remoteAccess' | 'clipboard' | 'fakeAlert' | 'programDownload';
+export type DetectorId =
+  | 'remoteAccess'
+  | 'clipboard'
+  | 'fakeAlert'
+  | 'programDownload'
+  | 'screenShare'
+  | 'cardEntry';
 
 export type EventKind =
   | 'remote-site'
   | 'remote-download'
   | 'clipboard'
   | 'fake-alert'
-  | 'program-download';
+  | 'program-download'
+  | 'screen-share'
+  | 'card-entry';
 
 export type Level = 'high' | 'medium';
 export type Outcome = 'pending' | 'allowed' | 'blocked';
-export type DecidedBy = 'user' | 'pin' | 'timer';
+export type DecidedBy = 'user' | 'pin' | 'timer' | 'guardian' | 'code';
 
 export interface PinRecord {
   salt: string;
@@ -41,6 +49,12 @@ export interface Settings {
   /** Hostnames the trusted person allowed permanently. */
   trustedSites: string[];
   pin: PinRecord | null;
+  /** Alert relay address; empty means no automatic alerts. */
+  relayUrl: string;
+  /** How alerts name this computer for the trusted person: "Mom, laptop". */
+  installName: string;
+  /** Read the pause screen aloud. */
+  voice: boolean;
 }
 
 /** A stopped action waiting for a decision. Lives in session storage only. */
@@ -61,6 +75,15 @@ export interface PauseEvent {
   decidedAt?: number;
   asked?: boolean;
   reasons: string[];
+  /** Alert sent through the relay to the trusted person's Telegram. */
+  alertId?: string;
+  alertState?: 'sending' | 'sent' | 'queued' | 'failed';
+  /** SHA-256 of the one-time unlock code the trusted person can read out by phone. */
+  codeHash?: string;
+  codeTries?: number;
+  reply?: string;
+  replyBy?: string;
+  decidedByName?: string;
 }
 
 /** What the local log keeps: no full addresses, no page content. */
@@ -85,12 +108,16 @@ export interface Verdict {
 export interface PageStatus {
   clipboard: boolean;
   fakeAlert: boolean;
+  screenShare: boolean;
+  cardEntry: boolean;
   safeText: string;
 }
 
 export type ContentMessage =
   | { type: 'pageStatus' }
-  | { type: 'signal'; kind: 'clipboard' | 'fake-alert'; reasons: string[] };
+  | { type: 'signal'; kind: SignalKind; reasons: string[] };
+
+export type SignalKind = 'clipboard' | 'fake-alert' | 'screen-share' | 'card-entry';
 
 export interface PauseView {
   event: PauseEvent;
@@ -105,6 +132,9 @@ export interface PauseView {
   language: string | null;
   pinLockedUntil: number;
   pinAttemptsLeft: number;
+  /** Names of the people linked through Telegram; empty when there is no relay. */
+  guardians: string[];
+  voice: boolean;
 }
 
 export interface SetupInput {
@@ -125,11 +155,42 @@ export interface PublicState {
   todayCount: number;
   log: LogEntry[];
   version: string;
+  relay: RelayInfo;
+}
+
+export interface RelayInfo {
+  /** A relay address is set. */
+  configured: boolean;
+  /** People linked through Telegram. */
+  guardians: string[];
+  bot: string;
+}
+
+export interface PairingInfo {
+  ok: boolean;
+  code?: string;
+  link?: string;
+  bot?: string;
+  expiresAt?: number;
+  error?: string;
+}
+
+export interface PairingStatus {
+  ok: boolean;
+  status?: 'waiting' | 'paired' | 'expired';
+  guardianName?: string;
 }
 
 export type PageMessage =
   | { type: 'getEvent'; id: string }
-  | { type: 'decide'; id: string; decision: 'allow' | 'block'; pin?: string }
+  | { type: 'decide'; id: string; decision: 'allow' | 'block'; pin?: string; code?: string }
+  | { type: 'eventStatus'; id: string }
+  | { type: 'askGuardian'; id: string }
+  | { type: 'relayPair' }
+  | { type: 'relayPairStatus'; code: string }
+  | { type: 'relayTest' }
+  | { type: 'relayUnlink'; pin?: string }
+  | { type: 'relayRefresh' }
   | { type: 'markAsked'; id: string }
   | { type: 'verifyPin'; pin: string }
   | { type: 'getState' }
@@ -140,7 +201,7 @@ export type PageMessage =
 
 export interface DecideResult {
   ok: boolean;
-  error?: 'missing' | 'decided' | 'locked' | 'wrong-pin' | 'pin-locked' | 'invalid';
+  error?: 'missing' | 'decided' | 'locked' | 'wrong-pin' | 'pin-locked' | 'invalid' | 'wrong-code' | 'relay';
   attemptsLeft?: number;
   lockedUntil?: number;
 }

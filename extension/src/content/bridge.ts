@@ -4,8 +4,9 @@
 import siteRules from '../rules/sites.json' with { type: 'json' };
 import { isVisibleIn, scoreClipboard } from '../core/clipboard-score.ts';
 import { hostMatches } from '../core/domains.ts';
+import { isCardField, looksLikeCardNumber } from '../core/cards.ts';
 import { BEHAVIOUR_WEIGHTS, scoreFakeAlert } from '../core/fake-alert-score.ts';
-import type { ContentMessage, PageStatus } from '../core/types.ts';
+import type { ContentMessage, PageStatus, SignalKind } from '../core/types.ts';
 
 const VERDICT_ATTRIBUTE = 'data-scamfuse-verdict';
 const REPORT_INTERVAL_MS = 10_000;
@@ -20,6 +21,8 @@ const legitimateSecuritySite = hostMatches(host, siteRules.legitimateSecuritySit
 const status: PageStatus = {
   clipboard: !hostMatches(host, siteRules.developerSites),
   fakeAlert: true,
+  screenShare: !hostMatches(host, siteRules.meetingSites),
+  cardEntry: false,
   safeText: FALLBACK_SAFE_TEXT,
 };
 
@@ -39,7 +42,7 @@ if (/^https?:$/.test(location.protocol) || location.protocol === 'file:' || loca
 }
 
 const lastReport: Record<string, number> = {};
-function report(kind: 'clipboard' | 'fake-alert', reasons: string[]): void {
+function report(kind: SignalKind, reasons: string[]): void {
   const now = Date.now();
   if (now - (lastReport[kind] ?? 0) < REPORT_INTERVAL_MS) return;
   lastReport[kind] = now;
@@ -125,6 +128,43 @@ window.addEventListener(
       event.clipboardData.setData('text/plain', status.safeText);
       event.preventDefault();
     }
+  },
+  true,
+);
+
+// ------------------------------------------------------------------ screen sharing
+
+document.addEventListener(
+  'scamfuse:screen',
+  (event) => {
+    event.stopImmediatePropagation();
+    const block = status.screenShare;
+    if (block) report('screen-share', ['screen-share']);
+    document.documentElement?.setAttribute(VERDICT_ATTRIBUTE, JSON.stringify({ block }));
+  },
+  true,
+);
+
+// ------------------------------------------------------------------ bank card entry (child profile)
+
+let cardReported = false;
+document.addEventListener(
+  'input',
+  (event) => {
+    if (cardReported || !status.cardEntry) return;
+    const field = event.target;
+    if (!(field instanceof HTMLInputElement)) return;
+    const hints = {
+      autocomplete: field.autocomplete ?? '',
+      name: field.name ?? '',
+      id: field.id ?? '',
+      placeholder: field.placeholder ?? '',
+      label: field.getAttribute('aria-label') ?? '',
+    };
+    const byField = isCardField(hints);
+    if (!byField && !looksLikeCardNumber(field.value)) return;
+    cardReported = true;
+    report('card-entry', [byField ? 'card-field' : 'card-number']);
   },
   true,
 );

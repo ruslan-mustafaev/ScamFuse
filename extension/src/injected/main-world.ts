@@ -28,6 +28,8 @@
   const StringCtor = String;
   const BlobCtor = Blob;
   const ClipboardItemCtor = typeof ClipboardItem === 'function' ? ClipboardItem : undefined;
+  const PromiseCtor = Promise;
+  const DOMExceptionCtor = DOMException;
   const doc = document;
   const VERDICT_ATTRIBUTE = 'data-scamfuse-verdict';
 
@@ -41,21 +43,29 @@
     send('scamfuse:signal', name);
   }
 
-  /** Returns the safe replacement when the text must not reach the clipboard. */
-  function check(text: string, scriptWritten: boolean): string | null {
+  /**
+   * Asks the isolated script a question and reads its answer synchronously:
+   * dispatchEvent runs the listener before it returns.
+   */
+  function ask(type: string, detail: string): { block?: boolean; safe?: string } | null {
     const root = documentElementGetter ? (reflectApply(documentElementGetter, doc, []) as Element | null) : null;
     if (!root) return null;
     reflectApply(removeAttribute, root, [VERDICT_ATTRIBUTE]);
-    send('scamfuse:clipboard', jsonStringify({ text, scriptWritten }));
+    send(type, detail);
     const raw = reflectApply(getAttribute, root, [VERDICT_ATTRIBUTE]) as string | null;
     reflectApply(removeAttribute, root, [VERDICT_ATTRIBUTE]);
     if (!raw) return null;
     try {
-      const verdict = jsonParse(raw) as { block?: boolean; safe?: string };
-      return verdict.block ? StringCtor(verdict.safe ?? '') : null;
+      return jsonParse(raw) as { block?: boolean; safe?: string };
     } catch {
       return null;
     }
+  }
+
+  /** Returns the safe replacement when the text must not reach the clipboard. */
+  function check(text: string, scriptWritten: boolean): string | null {
+    const verdict = ask('scamfuse:clipboard', jsonStringify({ text, scriptWritten }));
+    return verdict?.block ? StringCtor(verdict.safe ?? '') : null;
   }
 
   function wrap<T extends object>(
@@ -121,6 +131,20 @@
     function execCommand(this: unknown, ...args: unknown[]) {
       const command = StringCtor(args[0]).toLowerCase();
       if (command === 'copy' || command === 'cut') send('scamfuse:exec-copy', '1');
+      return reflectApply(original, this, args);
+    },
+  );
+
+  // ------------------------------------------------------------ screen sharing
+
+  // A site that is not a known meeting service asks to see the screen: refuse it and let the
+  // extension show the pause screen. After "Continue" the site is allowed and can ask again.
+  const mediaProto = typeof MediaDevices === 'function' ? MediaDevices.prototype : undefined;
+  wrap(mediaProto, 'getDisplayMedia', (original) =>
+    function getDisplayMedia(this: unknown, ...args: unknown[]) {
+      if (ask('scamfuse:screen', '1')?.block) {
+        return PromiseCtor.reject(new DOMExceptionCtor('Permission denied', 'NotAllowedError'));
+      }
       return reflectApply(original, this, args);
     },
   );

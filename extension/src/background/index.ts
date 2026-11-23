@@ -20,6 +20,8 @@ import { defaultDetectors, isValidPin, normalizeSettings } from '../core/setting
 import type {
   ContentMessage,
   DecidedBy,
+  DetectorId,
+  SignalKind,
   DecideResult,
   EventKind,
   Level,
@@ -32,6 +34,23 @@ import type {
   SetupInput,
 } from '../core/types.ts';
 import { getTranslator } from '../shared/runtime-i18n.ts';
+import {
+  alertStatus,
+  applyUninstallUrl,
+  codeHash,
+  getCredentials,
+  heartbeat,
+  linkedGuardians,
+  newUnlockCode,
+  pairingStatus,
+  refreshGuardians,
+  sendAlert,
+  sendDeviceEvent,
+  sendTest,
+  startPairing,
+  unlink,
+  updateInstall,
+} from './relay.ts';
 import {
   getAllowances,
   getEvents,
@@ -51,6 +70,17 @@ import {
 const PAUSE_PAGE = 'pages/pause.html';
 const WELCOME_PAGE = 'pages/welcome.html';
 const REASON_PATTERN = /^[a-z0-9:-]{1,40}$/;
+const HEARTBEAT_ALARM = 'relay-heartbeat';
+const RETRY_ALARM = 'relay-retry';
+const RETRY_WINDOW_MS = 60 * 60_000;
+const CODE_ATTEMPTS = 5;
+
+const SIGNAL_DETECTORS: Record<SignalKind, DetectorId> = {
+  clipboard: 'clipboard',
+  'fake-alert': 'fakeAlert',
+  'screen-share': 'screenShare',
+  'card-entry': 'cardEntry',
+};
 
 // ---------------------------------------------------------------- lifecycle
 
@@ -60,11 +90,25 @@ chrome.runtime.onInstalled.addListener((details) => {
       await chrome.tabs.create({ url: chrome.runtime.getURL(WELCOME_PAGE) });
     }
     await refreshAction();
+    await ensureAlarms();
   })();
 });
 
 chrome.runtime.onStartup.addListener(() => {
   void refreshAction();
+  void ensureAlarms();
+  void getCredentials().then(applyUninstallUrl);
+});
+
+async function ensureAlarms(): Promise<void> {
+  if (!(await chrome.alarms.get(HEARTBEAT_ALARM))) {
+    await chrome.alarms.create(HEARTBEAT_ALARM, { delayInMinutes: 1, periodInMinutes: 24 * 60 });
+  }
+}
+
+chrome.alarms.onAlarm.addListener((alarm) => {
+  if (alarm.name === HEARTBEAT_ALARM) void heartbeat();
+  if (alarm.name === RETRY_ALARM) void retryQueuedAlerts();
 });
 
 chrome.storage.onChanged.addListener((changes, area) => {
@@ -150,6 +194,87 @@ async function openPause(request: PauseRequest): Promise<void> {
     if (request.mute) await chrome.tabs.update(request.tabId, { muted: true }).catch(() => undefined);
     await chrome.tabs.update(request.tabId, { url: pauseUrl });
   }
+
+  // Dangerous actions reach the trusted person by themselves; in the strict mode, everything does.
+  // Not awaited: the pause screen must never wait for the network.
+  const settings = await getSettings();
+  if (!event.alertId && (event.level === 'high' || settings.mode === 'strict')) {
+    void notifyGuardian(event.id);
+  }
+}
+
+// ---------------------------------------------------------------- alerts to the trusted person
+
+/** Sends the alert for a stopped action through the relay. Safe to call more than once. */
+async function notifyGuardian(eventId: string): Promise<PauseEvent['alertState']> {
+  if ((await linkedGuardians()).length === 0) return undefined;
+  const reserved = await serial(async () => {
+    const events = await getEvents();
+    const event = events[eventId];
+    if (!event || event.outcome !== 'pending' || event.alertId || event.alertState === 'sending') return null;
+    const unlock = await newUnlockCode(event.id);
+    events[event.id] = { ...event, alertState: 'sending', codeHash: unlock.hash, codeTries: 0 };
+    await saveEvents(events);
+    return { event, code: unlock.code };
+  });
+  if (!reserved) return (await getEvents())[eventId]?.alertState;
+
+  const alertId = await sendAlert(reserved.event.kind, reserved.event.host, reserved.code);
+  await serial(async () => {
+    const events = await getEvents();
+    const event = events[eventId];
+    if (!event) return;
+    // The code was never delivered when sending failed, so it must not unlock anything.
+    events[eventId] = alertId
+      ? { ...event, alertId, alertState: 'sent' }
+      : { ...event, alertState: 'queued', codeHash: undefined };
+    await saveEvents(events);
+  });
+  if (!alertId) await chrome.alarms.create(RETRY_ALARM, { delayInMinutes: 1 });
+  return alertId ? 'sent' : 'queued';
+}
+
+/** Alerts that could not be sent (no internet) are retried every minute for an hour. */
+async function retryQueuedAlerts(): Promise<void> {
+  const now = Date.now();
+  const queued = Object.values(await getEvents()).filter(
+    (event) => event.alertState === 'queued' && event.outcome === 'pending' && now - event.createdAt < RETRY_WINDOW_MS,
+  );
+  for (const event of queued) await notifyGuardian(event.id);
+}
+
+/** Reads the trusted person's answer and carries it out. */
+async function eventStatus(id: string, sender: chrome.runtime.MessageSender): Promise<PauseView | null> {
+  const event = (await getEvents())[id];
+  if (event?.alertId && event.outcome === 'pending') {
+    const status = await alertStatus(event.alertId);
+    if (status) {
+      await serial(async () => {
+        const events = await getEvents();
+        const current = events[id];
+        if (!current || current.outcome !== 'pending') return;
+        const next: PauseEvent = {
+          ...current,
+          reply: status.reply ?? current.reply,
+          replyBy: status.replyBy ?? current.replyBy,
+        };
+        events[id] = next;
+        await saveEvents(events);
+        if (status.status === 'pending') return;
+        const tabId = sender.tab?.id ?? next.tabId;
+        if (status.status === 'allowed') {
+          if (status.always && next.host) {
+            const settings = await getSettings();
+            await saveSettings(normalizeSettings({ ...settings, trustedSites: [...settings.trustedSites, next.host] }));
+          }
+          await carryOutAllow(next, events, tabId, 'guardian', status.decidedBy ?? undefined);
+        } else {
+          await carryOutBlock(next, events, tabId, 'guardian', status.decidedBy ?? undefined);
+        }
+      });
+    }
+  }
+  return pauseView(id);
 }
 
 function cleanReasons(reasons: unknown): string[] {
@@ -262,6 +387,7 @@ async function checkPin(settings: Settings, pin: string | undefined): Promise<Pi
   const ok = await verifyPin(pin, settings.pin);
   const next = nextGuard(guard, ok, now);
   await savePinGuard(next);
+  if (next.lockedUntil > now && guard.lockedUntil <= now) void sendDeviceEvent('pin-locked');
   return { ok, attemptsLeft: PIN_MAX_ATTEMPTS - next.fails, lockedUntil: next.lockedUntil };
 }
 
@@ -280,67 +406,113 @@ async function decide(
   const events = await getEvents();
   const event = events[message.id];
   if (!event) return { ok: false, error: 'missing' };
+  if (event.outcome === 'blocked' && message.decision === 'block') {
+    // The trusted person already said no; "Close" now only takes the person away.
+    await leave(event, sender.tab?.id ?? event.tabId);
+    return { ok: true };
+  }
   if (event.outcome !== 'pending') return { ok: false, error: 'decided' };
   const settings = await getSettings();
   const now = Date.now();
   const tabId = sender.tab?.id ?? event.tabId;
 
-  if (message.decision === 'allow') {
-    let decidedBy: DecidedBy;
-    if (message.pin) {
-      const check = await checkPin(settings, message.pin);
-      if (!check.ok) {
-        return check.lockedUntil
-          ? { ok: false, error: 'pin-locked', lockedUntil: check.lockedUntil }
-          : { ok: false, error: 'wrong-pin', attemptsLeft: check.attemptsLeft };
-      }
-      decidedBy = 'pin';
-    } else {
-      if (now < continueAvailableAt(event, settings.mode, settings.lockMinutes)) {
-        return { ok: false, error: 'locked' };
-      }
-      decidedBy = settings.mode === 'strict' ? 'timer' : 'user';
-    }
-    events[event.id] = { ...event, outcome: 'allowed', decidedBy, decidedAt: now };
-    await saveEvents(events);
-    await saveAllowances(allow(await getAllowances(), event.kind, event.host, now));
-    await saveLog(updateLog(await getLog(), event.id, { outcome: 'allowed', decidedBy }));
-
-    if (event.downloadId !== undefined) {
-      await finishDownload(event.downloadId, true);
-      if (event.ownTab && tabId !== undefined) await chrome.tabs.remove(tabId).catch(() => undefined);
-    } else if (tabId !== undefined && event.url) {
-      if (event.kind === 'fake-alert') await chrome.tabs.update(tabId, { muted: false }).catch(() => undefined);
-      await chrome.tabs.update(tabId, { url: event.url });
-    }
+  if (message.decision === 'block') {
+    await carryOutBlock(event, events, tabId, 'user');
     return { ok: true };
   }
 
-  events[event.id] = { ...event, outcome: 'blocked', decidedBy: 'user', decidedAt: now };
-  await saveEvents(events);
-  await saveLog(updateLog(await getLog(), event.id, { outcome: 'blocked', decidedBy: 'user' }));
-  if (event.downloadId !== undefined) {
-    await finishDownload(event.downloadId, false);
-    if (event.ownTab && tabId !== undefined) await chrome.tabs.remove(tabId).catch(() => undefined);
-  } else if (tabId !== undefined) {
-    if (event.kind === 'fake-alert') await chrome.tabs.update(tabId, { muted: false }).catch(() => undefined);
-    await chrome.tabs.update(tabId, { url: 'chrome://newtab/' }).catch(() =>
-      chrome.tabs.update(tabId, { url: 'about:blank' }),
-    );
+  let decidedBy: DecidedBy;
+  if (message.code) {
+    // The one-time code the trusted person read out by phone.
+    const tries = event.codeTries ?? 0;
+    if (!event.codeHash || tries >= CODE_ATTEMPTS) return { ok: false, error: 'wrong-code', attemptsLeft: 0 };
+    if ((await codeHash(event.id, message.code.replace(/\D/g, ''))) !== event.codeHash) {
+      events[event.id] = { ...event, codeTries: tries + 1 };
+      await saveEvents(events);
+      return { ok: false, error: 'wrong-code', attemptsLeft: CODE_ATTEMPTS - tries - 1 };
+    }
+    decidedBy = 'code';
+  } else if (message.pin) {
+    const check = await checkPin(settings, message.pin);
+    if (!check.ok) {
+      return check.lockedUntil
+        ? { ok: false, error: 'pin-locked', lockedUntil: check.lockedUntil }
+        : { ok: false, error: 'wrong-pin', attemptsLeft: check.attemptsLeft };
+    }
+    decidedBy = 'pin';
+  } else {
+    if (now < continueAvailableAt(event, settings.mode, settings.lockMinutes)) {
+      return { ok: false, error: 'locked' };
+    }
+    decidedBy = settings.mode === 'strict' ? 'timer' : 'user';
   }
+  await carryOutAllow(event, events, tabId, decidedBy);
   return { ok: true };
+}
+
+/** "Continue": records the decision, allows this kind of action on the site, returns the person. */
+async function carryOutAllow(
+  event: PauseEvent,
+  events: Record<string, PauseEvent>,
+  tabId: number | undefined,
+  decidedBy: DecidedBy,
+  decidedByName?: string,
+): Promise<void> {
+  const now = Date.now();
+  events[event.id] = { ...event, outcome: 'allowed', decidedBy, decidedByName, decidedAt: now };
+  await saveEvents(events);
+  await saveAllowances(allow(await getAllowances(), event.kind, event.host, now));
+  await saveLog(updateLog(await getLog(), event.id, { outcome: 'allowed', decidedBy }));
+
+  if (event.downloadId !== undefined) {
+    await finishDownload(event.downloadId, true);
+    if (event.ownTab && tabId !== undefined) await chrome.tabs.remove(tabId).catch(() => undefined);
+  } else if (tabId !== undefined && event.url) {
+    if (event.kind === 'fake-alert') await chrome.tabs.update(tabId, { muted: false }).catch(() => undefined);
+    await chrome.tabs.update(tabId, { url: event.url });
+  }
+}
+
+/** "Close": records the decision and takes the person away from the danger. */
+async function carryOutBlock(
+  event: PauseEvent,
+  events: Record<string, PauseEvent>,
+  tabId: number | undefined,
+  decidedBy: DecidedBy,
+  decidedByName?: string,
+): Promise<void> {
+  events[event.id] = { ...event, outcome: 'blocked', decidedBy, decidedByName, decidedAt: Date.now() };
+  await saveEvents(events);
+  await saveLog(updateLog(await getLog(), event.id, { outcome: 'blocked', decidedBy }));
+  if (event.downloadId !== undefined) await finishDownload(event.downloadId, false);
+  // A trusted person's "no" keeps the pause screen open, so the person sees the answer.
+  if (decidedBy === 'user') await leave(event, tabId);
+}
+
+async function leave(event: PauseEvent, tabId: number | undefined): Promise<void> {
+  if (tabId === undefined) return;
+  if (event.downloadId !== undefined && event.ownTab) {
+    await chrome.tabs.remove(tabId).catch(() => undefined);
+    return;
+  }
+  if (event.kind === 'fake-alert') await chrome.tabs.update(tabId, { muted: false }).catch(() => undefined);
+  await chrome.tabs.update(tabId, { url: 'chrome://newtab/' }).catch(() =>
+    chrome.tabs.update(tabId, { url: 'about:blank' }),
+  );
 }
 
 // ---------------------------------------------------------------- messages from pages
 
 async function publicState(): Promise<PublicState> {
-  const [settings, log] = await Promise.all([getSettings(), getLog()]);
+  const [settings, log, credentials] = await Promise.all([getSettings(), getLog(), getCredentials()]);
   const { pin, ...rest } = settings;
+  const linked = credentials && credentials.url === settings.relayUrl ? credentials : null;
   return {
     settings: { ...rest, hasPin: pin !== null },
     todayCount: countToday(log, Date.now()),
     log: log.slice(0, 50),
     version: chrome.runtime.getManifest().version,
+    relay: { configured: Boolean(settings.relayUrl), guardians: linked?.guardians ?? [], bot: linked?.bot ?? '' },
   };
 }
 
@@ -362,6 +534,8 @@ async function pauseView(id: string): Promise<PauseView | null> {
     language: settings.language,
     pinLockedUntil: guard.lockedUntil > Date.now() ? guard.lockedUntil : 0,
     pinAttemptsLeft: PIN_MAX_ATTEMPTS - guard.fails,
+    guardians: settings.relayUrl ? await linkedGuardians() : [],
+    voice: settings.voice,
   };
 }
 
@@ -395,6 +569,26 @@ async function handlePageMessage(message: PageMessage, sender: chrome.runtime.Me
   switch (message.type) {
     case 'getEvent':
       return pauseView(String(message.id));
+    case 'eventStatus':
+      return eventStatus(String(message.id), sender);
+    case 'askGuardian': {
+      const state = await notifyGuardian(String(message.id));
+      return { ok: state === 'sent' || state === 'sending', state };
+    }
+    case 'relayPair':
+      return startPairing(await getSettings());
+    case 'relayPairStatus':
+      return pairingStatus(String(message.code));
+    case 'relayRefresh':
+      return { ok: true, guardians: await refreshGuardians() };
+    case 'relayTest':
+      return { ok: await sendTest() };
+    case 'relayUnlink':
+      return serial(async () => {
+        if (!(await authorized(await getSettings(), message.pin))) return { ok: false, error: 'wrong-pin' };
+        await unlink();
+        return { ok: true };
+      });
     case 'decide':
       return serial(() => decide(message, sender));
     case 'markAsked':
@@ -419,11 +613,21 @@ async function handlePageMessage(message: PageMessage, sender: chrome.runtime.Me
       return serial(async () => {
         const settings = await getSettings();
         const keys = Object.keys(message.patch ?? {});
-        // The language is not a protection setting: anyone may switch it.
-        const languageOnly = keys.length === 1 && keys[0] === 'language';
-        if (!languageOnly && !(await authorized(settings, message.pin))) return { ok: false, error: 'wrong-pin' };
+        // The language and the computer's name in alerts are not protection settings: anyone may change them.
+        const harmless = keys.length > 0 && keys.every((key) => key === 'language' || key === 'installName');
+        if (!harmless && !(await authorized(settings, message.pin))) return { ok: false, error: 'wrong-pin' };
         const { pin: _ignored, version: _version, ...patch } = message.patch as Record<string, unknown>;
-        await saveSettings(normalizeSettings({ ...settings, ...patch, pin: settings.pin }));
+        const next = normalizeSettings({ ...settings, ...patch, pin: settings.pin });
+        await saveSettings(next);
+        // The trusted person hears when protection is switched off, and alerts keep the right name.
+        if (settings.enabled && !next.enabled) void sendDeviceEvent('disabled');
+        if (
+          next.installName !== settings.installName ||
+          next.profile !== settings.profile ||
+          next.language !== settings.language
+        ) {
+          void updateInstall(next);
+        }
         return { ok: true };
       });
     case 'setPin':
@@ -484,6 +688,15 @@ async function pageStatus(sender: chrome.runtime.MessageSender): Promise<PageSta
       settings.enabled &&
       settings.detectors.fakeAlert &&
       !(await siteAllowed(settings, host, 'fake-alert')),
+    screenShare:
+      settings.enabled &&
+      settings.detectors.screenShare &&
+      !hostMatches(host, siteRules.meetingSites) &&
+      !(await siteAllowed(settings, host, 'screen-share')),
+    cardEntry:
+      settings.enabled &&
+      settings.detectors.cardEntry &&
+      !(await siteAllowed(settings, host, 'card-entry')),
     safeText: tr.t('clip_safe'),
   };
 }
@@ -496,12 +709,13 @@ async function signal(
   if (tabId === undefined) return;
   const settings = await getSettings();
   if (!settings.enabled) return;
-  const kind = message.kind === 'clipboard' ? 'clipboard' : 'fake-alert';
-  if (!settings.detectors[kind === 'clipboard' ? 'clipboard' : 'fakeAlert']) return;
+  const kind = message.kind;
+  if (!(kind in SIGNAL_DETECTORS) || !settings.detectors[SIGNAL_DETECTORS[kind]]) return;
   const url = sender.tab?.url ?? sender.url ?? '';
   const host = hostOf(url);
   if (await siteAllowed(settings, host, kind)) return;
   if (kind === 'clipboard' && hostMatches(host, siteRules.developerSites)) return;
+  if (kind === 'screen-share' && hostMatches(host, siteRules.meetingSites)) return;
   await serial(() =>
     openPause({
       kind,

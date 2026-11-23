@@ -6,6 +6,7 @@ import type { Translator } from '../core/i18n.ts';
 import { defaultChannel, isValidEmail, isValidPin, normalizePhone } from '../core/settings.ts';
 import type { Channel, DecideResult, Profile, PublicState } from '../core/types.ts';
 import { h, languageSelect, logo, mount, send, translator } from './common.ts';
+import { telegramBlock } from './telegram-link.ts';
 
 interface Draft {
   profile: Profile;
@@ -296,7 +297,27 @@ function renderDone(): void {
         ),
         h('p', { class: 'muted small', style: 'margin-top: 20px' }, tr.t('done_pin_icon')),
       ),
+      state.relay.configured && draft.profile !== 'self' ? telegramCard() : null,
     ),
+  );
+}
+
+/** Optional third step: alerts that reach the trusted person by themselves. */
+function telegramCard(): HTMLElement {
+  const name = h('input', {
+    id: 'install-name',
+    maxlength: 60,
+    autocomplete: 'off',
+    placeholder: tr.t('field_install_name_placeholder'),
+    value: state.settings.installName,
+  });
+  name.addEventListener('change', () => {
+    void send({ type: 'saveSettings', patch: { installName: name.value.trim() } });
+  });
+  return h('section', { class: 'card', style: 'margin-top: 20px' },
+    h('h2', {}, tr.t('tg_title')),
+    h('label', { class: 'field' }, h('span', {}, tr.t('field_install_name')), name),
+    telegramBlock(tr, state.relay),
   );
 }
 

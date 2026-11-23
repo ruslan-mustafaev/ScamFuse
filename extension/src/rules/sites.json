@@ -35,6 +35,21 @@
     "fbi.gov",
     "ic3.gov"
   ],
+  "meetingSites": [
+    "meet.google.com",
+    "zoom.us",
+    "zoom.com",
+    "teams.microsoft.com",
+    "teams.live.com",
+    "whereby.com",
+    "meet.jit.si",
+    "discord.com",
+    "web.telegram.org",
+    "web.whatsapp.com",
+    "webex.com",
+    "app.slack.com",
+    "skype.com"
+  ],
   "officialDownloadSites": [
     "microsoft.com",
     "apps.microsoft.com",

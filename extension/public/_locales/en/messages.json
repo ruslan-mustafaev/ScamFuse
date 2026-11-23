@@ -1,207 +1,735 @@
 {
-  "extName": { "message": "ScamFuse" },
-  "extDescription": { "message": "Pauses the dangerous actions scammers push people into and asks someone you trust." },
-  "actionTitle": { "message": "ScamFuse: protection" },
-
-  "lang_label": { "message": "Language" },
-  "lang_auto": { "message": "Automatic" },
-  "btn_back": { "message": "Back" },
-  "btn_skip": { "message": "Skip" },
-  "btn_save": { "message": "Save" },
-  "btn_add": { "message": "Add" },
-  "btn_remove": { "message": "Remove" },
-  "btn_unlock": { "message": "Open" },
-  "saved": { "message": "Saved" },
-
-  "profile_elder": { "message": "Mom, dad or grandparent" },
-  "profile_elder_hint": { "message": "Stops remote access tricks, fake virus alerts and dangerous commands." },
-  "profile_child": { "message": "A child or teenager" },
-  "profile_child_hint": { "message": "Also asks before installing programs from unofficial sites." },
-  "profile_self": { "message": "Myself" },
-  "profile_self_hint": { "message": "Warnings for you. You decide." },
-
-  "welcome_step": { "message": "Step {step} of 2" },
-  "welcome_title": { "message": "Who are we protecting?" },
-  "welcome_subtitle": { "message": "Choose one. You can change it later." },
-  "contact_title": { "message": "Who should they ask if something looks wrong?" },
-  "contact_title__self": { "message": "Who can you ask in a tricky moment?" },
-  "contact_subtitle": { "message": "When ScamFuse stops something, the pause screen shows a button that opens a chat with this person. Nothing is sent by itself." },
-  "contact_subtitle__self": { "message": "Optional. You can add this later in settings." },
-  "field_who": { "message": "Who to ask" },
-  "field_who_placeholder": { "message": "e.g. Dad or Anna" },
-  "field_who_hint": { "message": "As it should read on the button: “Ask Dad”." },
-  "field_phone": { "message": "Their phone number" },
-  "field_phone_placeholder": { "message": "+44 7700 900123" },
-  "field_email": { "message": "Their e-mail" },
-  "field_email_placeholder": { "message": "name@example.com" },
-  "field_channel": { "message": "Message them via" },
-  "channel_whatsapp": { "message": "WhatsApp" },
-  "channel_telegram": { "message": "Telegram" },
-  "channel_email": { "message": "E-mail" },
-  "field_pin": { "message": "PIN to unlock (only you should know it)" },
-  "field_pin_placeholder": { "message": "4 to 6 digits, optional" },
-  "pin_hint_none": { "message": "Without a PIN, “Continue anyway” opens after 15 seconds." },
-  "pin_hint_set": { "message": "With a PIN, a stopped action waits for your PIN or for 30 minutes." },
-  "btn_enable": { "message": "Turn on protection" },
-  "err_who": { "message": "Write who to ask." },
-  "err_phone": { "message": "Enter the number with the country code, e.g. +44 7700 900123." },
-  "err_email": { "message": "Enter a valid e-mail address." },
-  "err_pin": { "message": "The PIN must be 4 to 6 digits." },
-  "done_title": { "message": "Protection is on" },
-  "done_point_stop": { "message": "If a site tries something dangerous, ScamFuse stops it and shows a pause screen." },
-  "done_point_ask": { "message": "On that screen there is a button: “Ask {name}”." },
-  "done_point_ask_none": { "message": "You can add someone to ask later in settings." },
-  "done_point_private": { "message": "ScamFuse does not send anything by itself and does not collect your browsing history." },
-  "done_show": { "message": "Show this screen to the person you are protecting, so they know what the pause screen means." },
-  "done_pin_icon": { "message": "Tip: pin the icon. Click the puzzle piece next to the address bar, then the pin next to ScamFuse." },
-  "btn_try_demo": { "message": "Try it on the demo page" },
-  "btn_open_settings": { "message": "Settings" },
-
-  "pause_title": { "message": "Stop. Let's check." },
-  "what_remote_site": { "message": "This site offers a program that lets another person control your computer." },
-  "what_remote_download": { "message": "You are downloading a program that lets another person control your computer." },
-  "what_clipboard": { "message": "This site tried to slip a computer command into your clipboard. We removed it." },
-  "what_clipboard__child": { "message": "This site wanted you to paste a command into your computer. That is how accounts get stolen. We removed it." },
-  "what_fake_alert": { "message": "This page pretends your computer is infected. It is a scam." },
-  "what_program_download": { "message": "You are downloading a program from an unofficial site." },
-  "what_program_download__child": { "message": "Programs from unofficial sites often steal game accounts and passwords." },
-  "rule_remote_site": { "message": "Banks, police and support services never ask you to install such programs." },
-  "rule_remote_download": { "message": "Banks, police and support services never ask you to install such programs." },
-  "rule_clipboard": { "message": "Real websites never ask you to paste commands into Windows or Terminal." },
-  "rule_fake_alert": { "message": "Microsoft, Apple and your bank never show such pages and never ask you to call." },
-  "rule_program_download": { "message": "If someone you do not know asked you to install it, stop." },
-  "rule_program_download__child": { "message": "Install programs together with your parents." },
-  "btn_ask": { "message": "Ask {name}" },
-  "btn_ask_generic": { "message": "Ask someone you trust" },
-  "ask_via": { "message": "Opens {channel} with a ready message." },
-  "ask_missing": { "message": "No one to ask yet. Add them in settings." },
-  "call_line": { "message": "Or call: {phone}" },
-  "btn_close": { "message": "Close this page" },
-  "btn_close_download": { "message": "Cancel the download" },
-  "continue_wait": { "message": "Continue anyway in {seconds} s" },
-  "continue_now": { "message": "Continue anyway" },
-  "continue_strict": { "message": "Locked until {time}. Enter the PIN to open it now." },
-  "field_pin_short": { "message": "PIN" },
-  "pin_wrong": { "message": "Wrong PIN. Attempts left: {count}." },
-  "pin_locked": { "message": "Too many attempts. Try again after {time}." },
-  "done_allowed": { "message": "Allowed for 30 minutes. Going back…" },
-  "done_blocked": { "message": "Stopped. You are safe." },
-  "expired_title": { "message": "This pause is over" },
-  "expired_text": { "message": "You can close this tab." },
-  "details": { "message": "Why was it stopped?" },
-  "details_site": { "message": "Site: {host}" },
-
-  "reason_powershell": { "message": "A PowerShell command" },
-  "reason_cmd": { "message": "A command for the Windows command line" },
-  "reason_mshta": { "message": "A command that runs a program from the internet" },
-  "reason_pipe_to_shell": { "message": "A command that downloads and runs a script" },
-  "reason_shell_c": { "message": "A command for the system shell" },
-  "reason_osascript": { "message": "A command for macOS scripts" },
-  "reason_msiexec": { "message": "A command that installs a program" },
-  "reason_download_run": { "message": "A command that downloads and runs code" },
-  "reason_encoded": { "message": "A hidden, encoded command" },
-  "reason_hidden_window": { "message": "A command that runs in a hidden window" },
-  "reason_system_tool": { "message": "A Windows tool often used by attackers" },
-  "reason_base64_decode": { "message": "A command that unpacks hidden code" },
-  "reason_download_api": { "message": "A command that downloads files" },
-  "reason_unix_exec_prep": { "message": "A command that makes a file runnable" },
-  "reason_network_address": { "message": "An internet address inside the command" },
-  "reason_fake_verification_comment": { "message": "A fake “I am not a robot” note inside the command" },
-  "reason_hidden_padding": { "message": "Spaces that hide part of the command" },
-  "reason_hidden_write": { "message": "The site copied the text secretly" },
-  "reason_run_instructions": { "message": "The page tells you to press Win+R or open Terminal" },
-  "reason_fake_captcha": { "message": "A fake “I am not a robot” check" },
-  "reason_support_number": { "message": "A phone number to “call support”" },
-  "reason_fullscreen": { "message": "The page took over the whole screen" },
-  "reason_keyboard_lock": { "message": "The page tried to lock the keyboard" },
-  "reason_dialog_loop": { "message": "The page kept opening warning windows" },
-  "reason_history_trap": { "message": "The page blocks the Back button" },
-  "reason_words": { "message": "Typical scam phrases" },
-  "reason_remote_tool": { "message": "A remote access program" },
-  "reason_remote_site": { "message": "The site of a remote access program" },
-  "reason_unofficial_program": { "message": "A program from an unofficial site" },
-
-  "kind_remote_site": { "message": "Remote access site" },
-  "kind_remote_download": { "message": "Remote access program" },
-  "kind_clipboard": { "message": "Command in the clipboard" },
-  "kind_fake_alert": { "message": "Fake virus alert" },
-  "kind_program_download": { "message": "Program download" },
-
-  "msg_subject": { "message": "ScamFuse: please check" },
-  "msg_intro": { "message": "Hi! ScamFuse stopped something suspicious on my computer." },
-  "msg_intro_page": { "message": "Hi! Can you check this site for me?" },
-  "msg_what": { "message": "What: {what}" },
-  "msgwhat_remote_site": { "message": "a site of a remote access program" },
-  "msgwhat_remote_download": { "message": "an attempt to install a remote access program" },
-  "msgwhat_clipboard": { "message": "a site slipped a command into my clipboard" },
-  "msgwhat_fake_alert": { "message": "a fake virus alert" },
-  "msgwhat_program_download": { "message": "a program from an unofficial site" },
-  "msg_site": { "message": "Site: {host}" },
-  "msg_page_title": { "message": "Page: {title}" },
-  "msg_time": { "message": "Time: {time}" },
-  "msg_ask": { "message": "Can you call me?" },
-
+  "extName": {
+    "message": "ScamFuse"
+  },
+  "extDescription": {
+    "message": "Pauses the dangerous actions scammers push people into and asks someone you trust."
+  },
+  "actionTitle": {
+    "message": "ScamFuse: protection"
+  },
+  "lang_label": {
+    "message": "Language"
+  },
+  "lang_auto": {
+    "message": "Automatic"
+  },
+  "btn_back": {
+    "message": "Back"
+  },
+  "btn_skip": {
+    "message": "Skip"
+  },
+  "btn_save": {
+    "message": "Save"
+  },
+  "btn_add": {
+    "message": "Add"
+  },
+  "btn_remove": {
+    "message": "Remove"
+  },
+  "btn_unlock": {
+    "message": "Open"
+  },
+  "saved": {
+    "message": "Saved"
+  },
+  "profile_elder": {
+    "message": "Mom, dad or grandparent"
+  },
+  "profile_elder_hint": {
+    "message": "Stops remote access tricks, fake virus alerts and dangerous commands."
+  },
+  "profile_child": {
+    "message": "A child or teenager"
+  },
+  "profile_child_hint": {
+    "message": "Also asks before installing programs from unofficial sites."
+  },
+  "profile_self": {
+    "message": "Myself"
+  },
+  "profile_self_hint": {
+    "message": "Warnings for you. You decide."
+  },
+  "welcome_step": {
+    "message": "Step {step} of 2"
+  },
+  "welcome_title": {
+    "message": "Who are we protecting?"
+  },
+  "welcome_subtitle": {
+    "message": "Choose one. You can change it later."
+  },
+  "contact_title": {
+    "message": "Who should they ask if something looks wrong?"
+  },
+  "contact_title__self": {
+    "message": "Who can you ask in a tricky moment?"
+  },
+  "contact_subtitle": {
+    "message": "When ScamFuse stops something, the pause screen shows a button that opens a chat with this person. Nothing is sent by itself."
+  },
+  "contact_subtitle__self": {
+    "message": "Optional. You can add this later in settings."
+  },
+  "field_who": {
+    "message": "Who to ask"
+  },
+  "field_who_placeholder": {
+    "message": "e.g. Dad or Anna"
+  },
+  "field_who_hint": {
+    "message": "As it should read on the button: “Ask Dad”."
+  },
+  "field_phone": {
+    "message": "Their phone number"
+  },
+  "field_phone_placeholder": {
+    "message": "+44 7700 900123"
+  },
+  "field_email": {
+    "message": "Their e-mail"
+  },
+  "field_email_placeholder": {
+    "message": "name@example.com"
+  },
+  "field_channel": {
+    "message": "Message them via"
+  },
+  "channel_whatsapp": {
+    "message": "WhatsApp"
+  },
+  "channel_telegram": {
+    "message": "Telegram"
+  },
+  "channel_email": {
+    "message": "E-mail"
+  },
+  "field_pin": {
+    "message": "PIN to unlock (only you should know it)"
+  },
+  "field_pin_placeholder": {
+    "message": "4 to 6 digits, optional"
+  },
+  "pin_hint_none": {
+    "message": "Without a PIN, “Continue anyway” opens after 15 seconds."
+  },
+  "pin_hint_set": {
+    "message": "With a PIN, a stopped action waits for your PIN or for 30 minutes."
+  },
+  "btn_enable": {
+    "message": "Turn on protection"
+  },
+  "err_who": {
+    "message": "Write who to ask."
+  },
+  "err_phone": {
+    "message": "Enter the number with the country code, e.g. +44 7700 900123."
+  },
+  "err_email": {
+    "message": "Enter a valid e-mail address."
+  },
+  "err_pin": {
+    "message": "The PIN must be 4 to 6 digits."
+  },
+  "done_title": {
+    "message": "Protection is on"
+  },
+  "done_point_stop": {
+    "message": "If a site tries something dangerous, ScamFuse stops it and shows a pause screen."
+  },
+  "done_point_ask": {
+    "message": "On that screen there is a button: “Ask {name}”."
+  },
+  "done_point_ask_none": {
+    "message": "You can add someone to ask later in settings."
+  },
+  "done_point_private": {
+    "message": "ScamFuse does not send anything by itself and does not collect your browsing history."
+  },
+  "done_show": {
+    "message": "Show this screen to the person you are protecting, so they know what the pause screen means."
+  },
+  "done_pin_icon": {
+    "message": "Tip: pin the icon. Click the puzzle piece next to the address bar, then the pin next to ScamFuse."
+  },
+  "btn_try_demo": {
+    "message": "Try it on the demo page"
+  },
+  "btn_open_settings": {
+    "message": "Settings"
+  },
+  "pause_title": {
+    "message": "Stop. Let's check."
+  },
+  "what_remote_site": {
+    "message": "This site offers a program that lets another person control your computer."
+  },
+  "what_remote_download": {
+    "message": "You are downloading a program that lets another person control your computer."
+  },
+  "what_clipboard": {
+    "message": "This site tried to slip a computer command into your clipboard. We removed it."
+  },
+  "what_clipboard__child": {
+    "message": "This site wanted you to paste a command into your computer. That is how accounts get stolen. We removed it."
+  },
+  "what_fake_alert": {
+    "message": "This page pretends your computer is infected. It is a scam."
+  },
+  "what_program_download": {
+    "message": "You are downloading a program from an unofficial site."
+  },
+  "what_program_download__child": {
+    "message": "Programs from unofficial sites often steal game accounts and passwords."
+  },
+  "rule_remote_site": {
+    "message": "Banks, police and support services never ask you to install such programs."
+  },
+  "rule_remote_download": {
+    "message": "Banks, police and support services never ask you to install such programs."
+  },
+  "rule_clipboard": {
+    "message": "Real websites never ask you to paste commands into Windows or Terminal."
+  },
+  "rule_fake_alert": {
+    "message": "Microsoft, Apple and your bank never show such pages and never ask you to call."
+  },
+  "rule_program_download": {
+    "message": "If someone you do not know asked you to install it, stop."
+  },
+  "rule_program_download__child": {
+    "message": "Install programs together with your parents."
+  },
+  "btn_ask": {
+    "message": "Ask {name}"
+  },
+  "btn_ask_generic": {
+    "message": "Ask someone you trust"
+  },
+  "ask_via": {
+    "message": "Opens {channel} with a ready message."
+  },
+  "ask_missing": {
+    "message": "No one to ask yet. Add them in settings."
+  },
+  "call_line": {
+    "message": "Or call: {phone}"
+  },
+  "btn_close": {
+    "message": "Close this page"
+  },
+  "btn_close_download": {
+    "message": "Cancel the download"
+  },
+  "continue_wait": {
+    "message": "Continue anyway in {seconds} s"
+  },
+  "continue_now": {
+    "message": "Continue anyway"
+  },
+  "continue_strict": {
+    "message": "Locked until {time}. Enter the PIN to open it now."
+  },
+  "field_pin_short": {
+    "message": "PIN"
+  },
+  "pin_wrong": {
+    "message": "Wrong PIN. Attempts left: {count}."
+  },
+  "pin_locked": {
+    "message": "Too many attempts. Try again after {time}."
+  },
+  "done_allowed": {
+    "message": "Allowed for 30 minutes. Going back…"
+  },
+  "done_blocked": {
+    "message": "Stopped. You are safe."
+  },
+  "expired_title": {
+    "message": "This pause is over"
+  },
+  "expired_text": {
+    "message": "You can close this tab."
+  },
+  "details": {
+    "message": "Why was it stopped?"
+  },
+  "details_site": {
+    "message": "Site: {host}"
+  },
+  "reason_powershell": {
+    "message": "A PowerShell command"
+  },
+  "reason_cmd": {
+    "message": "A command for the Windows command line"
+  },
+  "reason_mshta": {
+    "message": "A command that runs a program from the internet"
+  },
+  "reason_pipe_to_shell": {
+    "message": "A command that downloads and runs a script"
+  },
+  "reason_shell_c": {
+    "message": "A command for the system shell"
+  },
+  "reason_osascript": {
+    "message": "A command for macOS scripts"
+  },
+  "reason_msiexec": {
+    "message": "A command that installs a program"
+  },
+  "reason_download_run": {
+    "message": "A command that downloads and runs code"
+  },
+  "reason_encoded": {
+    "message": "A hidden, encoded command"
+  },
+  "reason_hidden_window": {
+    "message": "A command that runs in a hidden window"
+  },
+  "reason_system_tool": {
+    "message": "A Windows tool often used by attackers"
+  },
+  "reason_base64_decode": {
+    "message": "A command that unpacks hidden code"
+  },
+  "reason_download_api": {
+    "message": "A command that downloads files"
+  },
+  "reason_unix_exec_prep": {
+    "message": "A command that makes a file runnable"
+  },
+  "reason_network_address": {
+    "message": "An internet address inside the command"
+  },
+  "reason_fake_verification_comment": {
+    "message": "A fake “I am not a robot” note inside the command"
+  },
+  "reason_hidden_padding": {
+    "message": "Spaces that hide part of the command"
+  },
+  "reason_hidden_write": {
+    "message": "The site copied the text secretly"
+  },
+  "reason_run_instructions": {
+    "message": "The page tells you to press Win+R or open Terminal"
+  },
+  "reason_fake_captcha": {
+    "message": "A fake “I am not a robot” check"
+  },
+  "reason_support_number": {
+    "message": "A phone number to “call support”"
+  },
+  "reason_fullscreen": {
+    "message": "The page took over the whole screen"
+  },
+  "reason_keyboard_lock": {
+    "message": "The page tried to lock the keyboard"
+  },
+  "reason_dialog_loop": {
+    "message": "The page kept opening warning windows"
+  },
+  "reason_history_trap": {
+    "message": "The page blocks the Back button"
+  },
+  "reason_words": {
+    "message": "Typical scam phrases"
+  },
+  "reason_remote_tool": {
+    "message": "A remote access program"
+  },
+  "reason_remote_site": {
+    "message": "The site of a remote access program"
+  },
+  "reason_unofficial_program": {
+    "message": "A program from an unofficial site"
+  },
+  "kind_remote_site": {
+    "message": "Remote access site"
+  },
+  "kind_remote_download": {
+    "message": "Remote access program"
+  },
+  "kind_clipboard": {
+    "message": "Command in the clipboard"
+  },
+  "kind_fake_alert": {
+    "message": "Fake virus alert"
+  },
+  "kind_program_download": {
+    "message": "Program download"
+  },
+  "msg_subject": {
+    "message": "ScamFuse: please check"
+  },
+  "msg_intro": {
+    "message": "Hi! ScamFuse stopped something suspicious on my computer."
+  },
+  "msg_intro_page": {
+    "message": "Hi! Can you check this site for me?"
+  },
+  "msg_what": {
+    "message": "What: {what}"
+  },
+  "msgwhat_remote_site": {
+    "message": "a site of a remote access program"
+  },
+  "msgwhat_remote_download": {
+    "message": "an attempt to install a remote access program"
+  },
+  "msgwhat_clipboard": {
+    "message": "a site slipped a command into my clipboard"
+  },
+  "msgwhat_fake_alert": {
+    "message": "a fake virus alert"
+  },
+  "msgwhat_program_download": {
+    "message": "a program from an unofficial site"
+  },
+  "msg_site": {
+    "message": "Site: {host}"
+  },
+  "msg_page_title": {
+    "message": "Page: {title}"
+  },
+  "msg_time": {
+    "message": "Time: {time}"
+  },
+  "msg_ask": {
+    "message": "Can you call me?"
+  },
   "clip_safe": {
     "message": "# ScamFuse removed a dangerous command here. Do not run what a website asked you to paste.",
     "description": "Replaces a malicious command in the clipboard. Must start with # and must not contain quotes, | & < > or $."
   },
-
-  "popup_on": { "message": "Protection is on" },
-  "popup_off": { "message": "Protection is off" },
-  "popup_setup_needed": { "message": "Setup is not finished" },
-  "btn_finish_setup": { "message": "Finish setup" },
-  "popup_today": { "message": "Stopped today: {count}" },
-  "popup_ask_page": { "message": "Ask {name} about this page" },
-  "popup_settings": { "message": "Settings" },
-  "popup_recent": { "message": "Recent" },
-  "popup_none": { "message": "Nothing suspicious yet." },
-  "popup_demo": { "message": "Demo page" },
-
-  "opt_title": { "message": "ScamFuse settings" },
-  "opt_locked_title": { "message": "Enter the PIN" },
-  "opt_locked_text": { "message": "Settings are protected with a PIN." },
-  "opt_enabled": { "message": "Protection is on" },
-  "opt_section_people": { "message": "Who to ask" },
-  "opt_section_protection": { "message": "Protection" },
-  "opt_profile": { "message": "Who is protected" },
-  "opt_mode": { "message": "When something is stopped" },
-  "mode_advice": { "message": "Advice: “Continue anyway” opens after 15 seconds" },
-  "mode_strict": { "message": "Strict: waits for the PIN or for the lock time" },
-  "mode_strict_needs_pin": { "message": "Set a PIN to use the strict mode." },
-  "opt_lock_minutes": { "message": "Lock time in strict mode, minutes" },
-  "opt_pin": { "message": "PIN" },
-  "opt_pin_on": { "message": "PIN is set." },
-  "opt_pin_none": { "message": "No PIN." },
-  "opt_pin_new": { "message": "New PIN (4 to 6 digits)" },
-  "btn_set_pin": { "message": "Save PIN" },
-  "btn_remove_pin": { "message": "Remove PIN" },
-  "opt_section_detectors": { "message": "What to stop" },
-  "det_remoteAccess": { "message": "Remote access programs" },
-  "det_remoteAccess_hint": { "message": "AnyDesk, TeamViewer and similar: the most common start of a bank scam." },
-  "det_clipboard": { "message": "Commands slipped into the clipboard" },
-  "det_clipboard_hint": { "message": "Fake “I am not a robot” checks that ask you to paste a command." },
-  "det_fakeAlert": { "message": "Fake virus alerts" },
-  "det_fakeAlert_hint": { "message": "Pages that lock the screen and ask you to call “support”." },
-  "det_programDownload": { "message": "Programs from unofficial sites" },
-  "det_programDownload_hint": { "message": "Cheats, mods and cracked games. Official stores are not affected." },
-  "opt_section_sites": { "message": "Trusted sites" },
-  "opt_sites_hint": { "message": "ScamFuse never stops anything on these sites." },
-  "opt_site_placeholder": { "message": "example.com" },
-  "opt_sites_empty": { "message": "No trusted sites." },
-  "err_site": { "message": "Enter a site address, e.g. example.com." },
-  "opt_section_log": { "message": "What was stopped" },
-  "log_empty": { "message": "Nothing yet." },
-  "log_time": { "message": "Time" },
-  "log_what": { "message": "What" },
-  "log_site": { "message": "Site" },
-  "log_result": { "message": "Result" },
-  "outcome_allowed": { "message": "Allowed" },
-  "outcome_blocked": { "message": "Stopped" },
-  "outcome_pending": { "message": "Waiting" },
-  "btn_clear_log": { "message": "Clear the log" },
-  "opt_section_about": { "message": "About" },
-  "about_text": { "message": "Open source. The log stays on this computer. Messages are sent only when someone presses the button." },
-  "about_source": { "message": "Source code" },
-  "about_version": { "message": "Version {version}" },
-  "btn_rerun_setup": { "message": "Run setup again" }
+  "popup_on": {
+    "message": "Protection is on"
+  },
+  "popup_off": {
+    "message": "Protection is off"
+  },
+  "popup_setup_needed": {
+    "message": "Setup is not finished"
+  },
+  "btn_finish_setup": {
+    "message": "Finish setup"
+  },
+  "popup_today": {
+    "message": "Stopped today: {count}"
+  },
+  "popup_ask_page": {
+    "message": "Ask {name} about this page"
+  },
+  "popup_settings": {
+    "message": "Settings"
+  },
+  "popup_recent": {
+    "message": "Recent"
+  },
+  "popup_none": {
+    "message": "Nothing suspicious yet."
+  },
+  "popup_demo": {
+    "message": "Demo page"
+  },
+  "opt_title": {
+    "message": "ScamFuse settings"
+  },
+  "opt_locked_title": {
+    "message": "Enter the PIN"
+  },
+  "opt_locked_text": {
+    "message": "Settings are protected with a PIN."
+  },
+  "opt_enabled": {
+    "message": "Protection is on"
+  },
+  "opt_section_people": {
+    "message": "Who to ask"
+  },
+  "opt_section_protection": {
+    "message": "Protection"
+  },
+  "opt_profile": {
+    "message": "Who is protected"
+  },
+  "opt_mode": {
+    "message": "When something is stopped"
+  },
+  "mode_advice": {
+    "message": "Advice: “Continue anyway” opens after 15 seconds"
+  },
+  "mode_strict": {
+    "message": "Strict: waits for the PIN or for the lock time"
+  },
+  "mode_strict_needs_pin": {
+    "message": "Set a PIN to use the strict mode."
+  },
+  "opt_lock_minutes": {
+    "message": "Lock time in strict mode, minutes"
+  },
+  "opt_pin": {
+    "message": "PIN"
+  },
+  "opt_pin_on": {
+    "message": "PIN is set."
+  },
+  "opt_pin_none": {
+    "message": "No PIN."
+  },
+  "opt_pin_new": {
+    "message": "New PIN (4 to 6 digits)"
+  },
+  "btn_set_pin": {
+    "message": "Save PIN"
+  },
+  "btn_remove_pin": {
+    "message": "Remove PIN"
+  },
+  "opt_section_detectors": {
+    "message": "What to stop"
+  },
+  "det_remoteAccess": {
+    "message": "Remote access programs"
+  },
+  "det_remoteAccess_hint": {
+    "message": "AnyDesk, TeamViewer and similar: the most common start of a bank scam."
+  },
+  "det_clipboard": {
+    "message": "Commands slipped into the clipboard"
+  },
+  "det_clipboard_hint": {
+    "message": "Fake “I am not a robot” checks that ask you to paste a command."
+  },
+  "det_fakeAlert": {
+    "message": "Fake virus alerts"
+  },
+  "det_fakeAlert_hint": {
+    "message": "Pages that lock the screen and ask you to call “support”."
+  },
+  "det_programDownload": {
+    "message": "Programs from unofficial sites"
+  },
+  "det_programDownload_hint": {
+    "message": "Cheats, mods and cracked games. Official stores are not affected."
+  },
+  "opt_section_sites": {
+    "message": "Trusted sites"
+  },
+  "opt_sites_hint": {
+    "message": "ScamFuse never stops anything on these sites."
+  },
+  "opt_site_placeholder": {
+    "message": "example.com"
+  },
+  "opt_sites_empty": {
+    "message": "No trusted sites."
+  },
+  "err_site": {
+    "message": "Enter a site address, e.g. example.com."
+  },
+  "opt_section_log": {
+    "message": "What was stopped"
+  },
+  "log_empty": {
+    "message": "Nothing yet."
+  },
+  "log_time": {
+    "message": "Time"
+  },
+  "log_what": {
+    "message": "What"
+  },
+  "log_site": {
+    "message": "Site"
+  },
+  "log_result": {
+    "message": "Result"
+  },
+  "outcome_allowed": {
+    "message": "Allowed"
+  },
+  "outcome_blocked": {
+    "message": "Stopped"
+  },
+  "outcome_pending": {
+    "message": "Waiting"
+  },
+  "btn_clear_log": {
+    "message": "Clear the log"
+  },
+  "opt_section_about": {
+    "message": "About"
+  },
+  "about_text": {
+    "message": "Open source. The log stays on this computer. Messages are sent only when someone presses the button."
+  },
+  "about_source": {
+    "message": "Source code"
+  },
+  "about_version": {
+    "message": "Version {version}"
+  },
+  "btn_rerun_setup": {
+    "message": "Run setup again"
+  },
+  "relay_sending": {
+    "message": "Sending a message to {names}…"
+  },
+  "relay_sent": {
+    "message": "Message sent to {names}. Waiting for an answer…"
+  },
+  "relay_queued": {
+    "message": "No internet. The message will go as soon as the connection is back."
+  },
+  "relay_reply": {
+    "message": "{name}: “{text}”"
+  },
+  "relay_allowed": {
+    "message": "{name}: allowed. Going back…"
+  },
+  "relay_blocked": {
+    "message": "{name}: not allowed. You can close this page."
+  },
+  "ask_via_telegram": {
+    "message": "Sends an alert to their Telegram."
+  },
+  "btn_asked": {
+    "message": "Message sent"
+  },
+  "field_code": {
+    "message": "Code from your trusted person"
+  },
+  "code_hint": {
+    "message": "They see a 6-digit code in Telegram. If they decide it is safe, they will read it to you by phone."
+  },
+  "code_wrong": {
+    "message": "Wrong code. Attempts left: {count}."
+  },
+  "kind_screen_share": {
+    "message": "Screen sharing"
+  },
+  "kind_card_entry": {
+    "message": "Bank card entry"
+  },
+  "what_screen_share": {
+    "message": "This site asks to see your screen. A stranger would see your passwords and bank codes."
+  },
+  "what_card_entry": {
+    "message": "This site asks for bank card details."
+  },
+  "what_card_entry__child": {
+    "message": "This site asks for bank card details. Purchases are made together with parents."
+  },
+  "rule_screen_share": {
+    "message": "Banks and support services never ask to see your screen."
+  },
+  "rule_card_entry": {
+    "message": "If someone asked you to pay or “confirm” a card, stop and call."
+  },
+  "rule_card_entry__child": {
+    "message": "Ask your parents first."
+  },
+  "msgwhat_screen_share": {
+    "message": "a site asks to see my screen"
+  },
+  "msgwhat_card_entry": {
+    "message": "a site asks for bank card details"
+  },
+  "reason_screen_share": {
+    "message": "The site asked to share the screen"
+  },
+  "reason_card_field": {
+    "message": "A bank card number field"
+  },
+  "reason_card_number": {
+    "message": "A bank card number was typed"
+  },
+  "det_screenShare": {
+    "message": "Screen sharing with unknown sites"
+  },
+  "det_screenShare_hint": {
+    "message": "Zoom, Google Meet, Teams and other meeting services are not affected."
+  },
+  "det_cardEntry": {
+    "message": "Bank card entry"
+  },
+  "det_cardEntry_hint": {
+    "message": "Asks before any purchase. Useful for children."
+  },
+  "tg_title": {
+    "message": "Alerts in Telegram"
+  },
+  "tg_text": {
+    "message": "Connect the trusted person's Telegram: alerts reach them by themselves, and they can allow or block an action from their phone."
+  },
+  "btn_tg_connect": {
+    "message": "Connect Telegram"
+  },
+  "tg_scan": {
+    "message": "Scan this code with the phone camera of the person who will get alerts."
+  },
+  "tg_or_code": {
+    "message": "Or open @{bot} in Telegram and send the code {code}"
+  },
+  "tg_waiting": {
+    "message": "Waiting for the connection… The code works for 10 minutes."
+  },
+  "tg_expired": {
+    "message": "The code has expired."
+  },
+  "btn_tg_new_code": {
+    "message": "Get a new code"
+  },
+  "tg_linked": {
+    "message": "Connected: {names}"
+  },
+  "btn_tg_test": {
+    "message": "Send a test alert"
+  },
+  "tg_test_sent": {
+    "message": "Test alert sent."
+  },
+  "btn_tg_add": {
+    "message": "Connect one more person"
+  },
+  "btn_tg_unlink": {
+    "message": "Disconnect Telegram"
+  },
+  "tg_error": {
+    "message": "The alert server is not available. Check the internet and try again."
+  },
+  "tg_limit": {
+    "message": "Three people are already connected."
+  },
+  "field_install_name": {
+    "message": "How alerts name this computer"
+  },
+  "field_install_name_placeholder": {
+    "message": "e.g. Mom, laptop"
+  },
+  "opt_relay_url": {
+    "message": "Alert server address"
+  },
+  "opt_relay_hint": {
+    "message": "Leave it as it is unless you run your own server."
+  },
+  "opt_relay_none": {
+    "message": "No alert server is set. Messages go only with the “Ask” button."
+  },
+  "err_relay_url": {
+    "message": "Enter an address that starts with https://."
+  },
+  "opt_voice": {
+    "message": "Read the pause screen aloud"
+  },
+  "opt_voice_hint": {
+    "message": "The browser reads the warning in its own voice."
+  },
+  "popup_tg": {
+    "message": "Alerts go to: {names}"
+  }
 }

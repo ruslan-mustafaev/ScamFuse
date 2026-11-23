@@ -1,5 +1,6 @@
 // Settings defaults and validation. Pure functions, no browser APIs.
 
+import { DEFAULT_RELAY_URL } from './config.ts';
 import type { Channel, DetectorId, Mode, Profile, Settings } from './types.ts';
 
 export const PROFILES: readonly Profile[] = ['elder', 'child', 'self'];
@@ -10,6 +11,8 @@ export const DETECTORS: readonly DetectorId[] = [
   'clipboard',
   'fakeAlert',
   'programDownload',
+  'screenShare',
+  'cardEntry',
 ];
 
 export const ADVICE_DELAY_SECONDS = 15;
@@ -26,6 +29,8 @@ export function defaultDetectors(profile: Profile): Record<DetectorId, boolean> 
     clipboard: true,
     fakeAlert: true,
     programDownload: profile === 'child',
+    screenShare: true,
+    cardEntry: profile === 'child',
   };
 }
 
@@ -51,6 +56,9 @@ export function defaultSettings(profile: Profile = 'elder', language = 'en'): Se
     detectors: defaultDetectors(profile),
     trustedSites: [],
     pin: null,
+    relayUrl: DEFAULT_RELAY_URL,
+    installName: '',
+    voice: false,
   };
 }
 
@@ -109,7 +117,28 @@ export function normalizeSettings(raw: unknown, language = 'en'): Settings {
         )
       : [],
     pin,
+    relayUrl: typeof r.relayUrl === 'string' ? normalizeRelayUrl(r.relayUrl) : base.relayUrl,
+    installName: text(r.installName, 60),
+    voice: r.voice === true,
   };
+}
+
+/**
+ * Relay address: https only, except a relay on this computer for development.
+ * Returns "" for anything else.
+ */
+export function normalizeRelayUrl(input: string): string {
+  const value = input.trim().replace(/\/+$/, '');
+  if (!value) return '';
+  try {
+    const url = new URL(value);
+    const local = url.protocol === 'http:' && (url.hostname === '127.0.0.1' || url.hostname === 'localhost');
+    if (url.protocol !== 'https:' && !local) return '';
+    if (url.search || url.hash || url.username || url.password) return '';
+    return `${url.origin}${url.pathname === '/' ? '' : url.pathname}`;
+  } catch {
+    return '';
+  }
 }
 
 /** Accepts "https://www.Example.com/path", "example.com" etc. Returns "example.com" or "". */

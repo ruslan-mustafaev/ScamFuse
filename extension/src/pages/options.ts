@@ -13,9 +13,11 @@ import {
   MIN_LOCK_MINUTES,
   normalizeHostInput,
   normalizePhone,
+  normalizeRelayUrl,
 } from '../core/settings.ts';
 import type { Channel, DecideResult, Mode, Profile, PublicState, Settings } from '../core/types.ts';
 import { h, languageSelect, logo, mount, send, translator } from './common.ts';
+import { telegramBlock } from './telegram-link.ts';
 
 type Patch = Partial<Omit<Settings, 'pin' | 'version'>>;
 
@@ -202,7 +204,44 @@ function render(): void {
       box,
     );
   });
+  const voice = h('input', { type: 'checkbox', checked: s.voice, id: 'opt-voice' });
+  voice.addEventListener('change', () => void save({ voice: voice.checked }));
+  detectorRows.push(
+    h('label', { class: 'switch-row' },
+      h('div', { class: 'text' }, h('strong', {}, tr.t('opt_voice')), h('span', {}, tr.t('opt_voice_hint'))),
+      voice,
+    ),
+  );
   const detectors = section(tr.t('opt_section_detectors'), ...detectorRows);
+
+  // ------------------------------------------------ alerts in Telegram
+  const relayField = textField(
+    tr.t('opt_relay_url'),
+    s.relayUrl,
+    { type: 'url', id: 'opt-relay', placeholder: 'https://', maxlength: 200 },
+    (v) => (v && !normalizeRelayUrl(v) ? tr.t('err_relay_url') : ''),
+    (value) => void save({ relayUrl: normalizeRelayUrl(value) }).then(render),
+  );
+  relayField.append(h('small', { class: 'hint' }, tr.t('opt_relay_hint')));
+  const telegram = section(
+    tr.t('tg_title'),
+    state.relay.configured
+      ? textField(tr.t('field_install_name'), s.installName, { maxlength: 60, id: 'opt-install-name', placeholder: tr.t('field_install_name_placeholder') }, () => '', (value) => void save({ installName: value }))
+      : h('p', { class: 'muted' }, tr.t('opt_relay_none')),
+    state.relay.configured
+      ? telegramBlock(tr, state.relay, {
+          onUnlink: async () => {
+            const result = await send<DecideResult>({ type: 'relayUnlink', pin });
+            if (result?.ok) {
+              await load();
+              render();
+            }
+          },
+          onLinked: () => void load(),
+        })
+      : null,
+    h('details', {}, h('summary', {}, tr.t('opt_relay_url')), relayField),
+  );
 
   // ------------------------------------------------ trusted sites
   const siteInput = h('input', { placeholder: tr.t('opt_site_placeholder'), id: 'opt-site', autocomplete: 'off' });
@@ -293,6 +332,7 @@ function render(): void {
         enabled,
       ),
       people,
+      telegram,
       protection,
       detectors,
       sites,

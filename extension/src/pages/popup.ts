@@ -59,6 +59,9 @@ async function start(): Promise<void> {
         }),
       ),
       status,
+      state.relay.guardians.length
+        ? h('p', { class: 'small', style: 'margin: 10px 0 0' }, tr.t('popup_tg', { names: state.relay.guardians.join(', ') }))
+        : null,
       h('p', { class: 'small', style: 'margin: 10px 0' }, tr.t('popup_today', { count: state.todayCount })),
       actions,
       h('h2', { style: 'font-size: 16px; margin: 16px 0 6px' }, tr.t('popup_recent')),
