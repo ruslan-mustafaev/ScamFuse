@@ -55,6 +55,11 @@ jobs:
             echo "::error::TELEGRAM_BOT_TOKEN does not look like a bot token. Copy it again from @BotFather, without spaces."
             exit 1
           fi
+          # The bot id (digits before the colon) is public; it shows which bot this token belongs to.
+          echo "Bot id from TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN%%:*}"
+          # Can this runner reach Telegram at all? A made-up token must get a quick 401.
+          probe="$(curl -4 -sS -m 15 -o /dev/null -w '%{http_code} in %{time_total}s' "https://api.telegram.org/bot1:x/getMe" || echo 'no answer')"
+          echo "Telegram reachability from this runner: $probe"
           # Ask Telegram once whether it knows the token. Only a clear "no" stops the deploy;
           # no answer or "slow down" is just a warning (extra calls would only add to the rate limit).
           me="$(curl -4 -sS -m 30 "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getMe" || true)"
