@@ -75,6 +75,8 @@ export async function handle(request: Request, deps: Deps): Promise<Response> {
     const ok = await deps.telegram.setWebhook(`${url.origin}/telegram/webhook`, deps.webhookSecret);
     await deps.telegram.setCommands(texts('en').commands);
     await deps.telegram.setCommands(texts('ru').commands, 'ru');
+    await deps.telegram.setDescription(texts('en').botDescription, texts('en').botShortDescription);
+    await deps.telegram.setDescription(texts('ru').botDescription, texts('ru').botShortDescription, 'ru');
     return json({ ok, webhook: `${url.origin}/telegram/webhook`, bot: deps.botUsername });
   }
 

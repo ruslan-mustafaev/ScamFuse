@@ -245,3 +245,11 @@ test('a fake site alert names the brand it imitates', async () => {
   assert.match(ctx.telegram.lastTo(GUARDIAN)?.text ?? '', /открыт поддельный сайт, похожий на PayPal/);
   assert.match(ctx.telegram.lastTo(GUARDIAN)?.text ?? '', /paypa1\[\.\]com/);
 });
+
+test('bot descriptions fit Telegram limits', async () => {
+  const { texts } = await import('../../relay/src/messages.ts');
+  for (const lang of ['en', 'ru']) {
+    assert.ok(texts(lang).botDescription.length <= 512, lang);
+    assert.ok(texts(lang).botShortDescription.length <= 120, lang);
+  }
+});

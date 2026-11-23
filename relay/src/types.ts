@@ -93,6 +93,7 @@ export interface Telegram {
   answerCallback(callbackId: string, text?: string): Promise<void>;
   setWebhook(url: string, secret: string): Promise<boolean>;
   setCommands(commands: { command: string; description: string }[], languageCode?: string): Promise<void>;
+  setDescription(description: string, shortDescription: string, languageCode?: string): Promise<void>;
 }
 
 export interface Deps {

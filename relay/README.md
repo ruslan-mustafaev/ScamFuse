@@ -26,7 +26,9 @@ time, decision) for 30 days. No browsing history, no page content.
 5. **Deploy.** Actions → "Deploy relay" → Run workflow. It applies the database migrations and
    publishes the Worker at `https://scamfuse-relay.<your-subdomain>.workers.dev`.
 6. **Connect Telegram.** Open `https://scamfuse-relay.<your-subdomain>.workers.dev/setup?key=<TELEGRAM_WEBHOOK_SECRET>`
-   once in a browser. It answers `{"ok":true,...}` when Telegram accepted the webhook.
+   once in a browser. It answers `{"ok":true,...}` when Telegram accepted the webhook, and it also
+   sets the bot's commands and descriptions in English and Russian. In @BotFather you only add the
+   picture: `/setuserpic`, then send [assets/bot-avatar.png](assets/bot-avatar.png).
 7. **Point the extension at it.** Set `DEFAULT_RELAY_URL` in
    [extension/src/core/config.ts](../extension/src/core/config.ts) to the Worker address. People who
    run their own relay can enter its address in the extension settings instead.

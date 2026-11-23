@@ -41,5 +41,6 @@ export function fakeTelegram(): FakeTelegram {
       return true;
     },
     async setCommands() {},
+    async setDescription() {},
   };
 }

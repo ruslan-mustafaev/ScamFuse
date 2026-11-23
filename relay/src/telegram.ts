@@ -58,5 +58,10 @@ export function telegramClient(token: string, base = 'https://api.telegram.org',
     async setCommands(commands, languageCode) {
       await call('setMyCommands', { commands, ...(languageCode ? { language_code: languageCode } : {}) });
     },
+    async setDescription(description, shortDescription, languageCode) {
+      const language = languageCode ? { language_code: languageCode } : {};
+      await call('setMyDescription', { description, ...language });
+      await call('setMyShortDescription', { short_description: shortDescription, ...language });
+    },
   };
 }

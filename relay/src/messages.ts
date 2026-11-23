@@ -80,6 +80,9 @@ const TEXT = {
       { command: 'stop', description: 'Stop receiving alerts' },
       { command: 'help', description: 'How it works' },
     ],
+    botDescription:
+      'ScamFuse warns you when someone you protect is about to do something dangerous on their computer: install a remote access program, paste a command from a site, call a fake support number or type a password on a fake site. Allow or block it here with one tap, or reply, and they see your answer on their screen. To connect, scan the QR code on the ScamFuse screen or send the 8-digit code.',
+    botShortDescription: "ScamFuse alerts: allow or block a dangerous action on a loved one's computer.",
     uninstallTitle: 'ScamFuse was removed',
     uninstallText: 'Your trusted people were told. If it was a mistake, install ScamFuse again.',
   },
@@ -153,6 +156,9 @@ const TEXT = {
       { command: 'stop', description: 'Не получать тревоги' },
       { command: 'help', description: 'Как это работает' },
     ],
+    botDescription:
+      'ScamFuse предупреждает, когда тот, кого вы защищаете, собирается сделать что-то опасное на компьютере: поставить программу удалённого доступа, вставить команду с сайта, позвонить по поддельному номеру поддержки или ввести пароль на поддельном сайте. Здесь вы одной кнопкой разрешаете или запрещаете действие, а ваш ответ появляется у него на экране. Чтобы подключить компьютер, отсканируйте QR-код на экране ScamFuse или пришлите 8-значный код.',
+    botShortDescription: 'Тревоги ScamFuse: разрешите или запретите опасное действие на компьютере близкого.',
     uninstallTitle: 'ScamFuse удалён',
     uninstallText: 'Доверенные люди получили сообщение. Если это ошибка, установите ScamFuse снова.',
   },
