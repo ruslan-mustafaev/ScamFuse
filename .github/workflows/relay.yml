@@ -16,7 +16,7 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     defaults:
       run:
         working-directory: relay
@@ -65,6 +65,9 @@ jobs:
           done
           if [[ $me == *'"ok":true'* ]]; then
             echo "Telegram bot: $(printf '%s' "$me" | grep -o '"username":"[^"]*"')"
+          elif [[ $me == *'Too Many Requests'* ]]; then
+            # Telegram rate-limits only bots it knows, so the token itself is fine.
+            echo "::warning::Telegram asks to slow down (the token is valid); continuing."
           elif [[ $me == *'"ok":false'* ]]; then
             reason="$(printf '%s' "$me" | grep -o '"description":"[^"]*"')"
             echo "::error::Telegram refused TELEGRAM_BOT_TOKEN ($reason). After /revoke in @BotFather, store the new token."
@@ -97,15 +100,27 @@ jobs:
             echo "::error::Worker address not found in the deploy output"
             exit 1
           fi
-          # New secrets can take a few seconds to reach the Worker.
-          for attempt in 1 2 3 4 5 6 7 8; do
+          # 403: the new secrets have not reached the Worker yet (seconds).
+          # "retry after N": Telegram's rate limit, wait as long as it asks.
+          # Anything else (e.g. a brand-new workers.dev name Telegram cannot resolve yet): wait 20 s.
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            rm -f setup.json
             status="$(curl -sS -m 60 -o setup.json -w '%{http_code}' --get --data-urlencode "key=$TELEGRAM_WEBHOOK_SECRET" "$url/setup" || true)"
             if [ "$status" = "200" ] && grep -q '"ok":true' setup.json; then
               echo "Telegram connected: $(cat setup.json)"
               exit 0
             fi
-            echo "Attempt $attempt: HTTP $status $(cat setup.json 2>/dev/null)"
-            sleep 5
+            retry="$(grep -oE 'retry after [0-9]+' setup.json 2>/dev/null | grep -oE '[0-9]+' || true)"
+            if [ "$status" = "403" ]; then
+              wait=5
+            elif [ -n "$retry" ]; then
+              wait=$(( retry + 2 ))
+            else
+              wait=20
+            fi
+            [ "$wait" -gt 120 ] && wait=120
+            echo "Attempt $attempt: HTTP $status $(cat setup.json 2>/dev/null) - next try in ${wait}s"
+            sleep "$wait"
           done
           echo "::error::Telegram did not accept the webhook (reason above, after \"telegram\"). If it says Unauthorized, store the new token from @BotFather in TELEGRAM_BOT_TOKEN."
           exit 1
