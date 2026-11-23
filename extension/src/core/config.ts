@@ -5,6 +5,6 @@ export const DEMO_URL = 'https://ruslan-mustafaev.github.io/ScamFuse/';
 
 /**
  * Address of the alert relay (Cloudflare Worker, see relay/README.md).
- * Empty until the relay is deployed: the extension then works without automatic alerts.
+ * With an empty value the extension works without automatic alerts.
  */
-export const DEFAULT_RELAY_URL = '';
+export const DEFAULT_RELAY_URL = 'https://scamfuse-relay.dev-interactive-rm.workers.dev';

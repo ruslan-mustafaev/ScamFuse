@@ -23,11 +23,12 @@ time, decision) for 30 days. No browsing history, no page content.
    - `CLOUDFLARE_ACCOUNT_ID` — the account ID
    - `TELEGRAM_BOT_TOKEN` — the token from step 1
    - `TELEGRAM_WEBHOOK_SECRET` — any random string of 32+ letters and digits
-5. **Deploy.** Actions → "Deploy relay" → Run workflow. It applies the database migrations and
-   publishes the Worker at `https://scamfuse-relay.<your-subdomain>.workers.dev`.
-6. **Connect Telegram.** Open `https://scamfuse-relay.<your-subdomain>.workers.dev/setup?key=<TELEGRAM_WEBHOOK_SECRET>`
-   once in a browser. It answers `{"ok":true,...}` when Telegram accepted the webhook, and it also
-   sets the bot's commands and descriptions in English and Russian. In @BotFather you only add the
+5. **Deploy.** Actions → "Deploy relay" → Run workflow. It applies the database migrations,
+   publishes the Worker at `https://scamfuse-relay.<your-subdomain>.workers.dev`, stores the two
+   Telegram secrets in it, and connects Telegram.
+6. **Telegram.** The last deploy step calls `/setup?key=<TELEGRAM_WEBHOOK_SECRET>` itself: it
+   registers the webhook and sets the bot's commands and descriptions in English and Russian. You can
+   also open that address in a browser; it answers `{"ok":true,...}`. In @BotFather you only add the
    picture: `/setuserpic`, then send [assets/bot-avatar.png](assets/bot-avatar.png).
 7. **Point the extension at it.** Set `DEFAULT_RELAY_URL` in
    [extension/src/core/config.ts](../extension/src/core/config.ts) to the Worker address. People who

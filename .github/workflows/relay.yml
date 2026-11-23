@@ -53,7 +53,9 @@ jobs:
         run: npx -y "$WRANGLER" d1 migrations apply scamfuse --remote
 
       - name: Publish the Worker
-        run: npx -y "$WRANGLER" deploy
+        run: |
+          set -o pipefail
+          npx -y "$WRANGLER" deploy | tee deploy.log
 
       # After the first publish, so the Worker already exists.
       - name: Store the Telegram secrets
@@ -62,3 +64,24 @@ jobs:
             TELEGRAM_BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN,
             TELEGRAM_WEBHOOK_SECRET: process.env.TELEGRAM_WEBHOOK_SECRET,
           }))' | npx -y "$WRANGLER" secret bulk
+
+      # Same as opening /setup?key=<webhook secret>: registers the webhook, bot commands and descriptions.
+      - name: Connect Telegram
+        run: |
+          url="$(grep -oE 'https://scamfuse-relay\.[a-z0-9-]+\.workers\.dev' deploy.log | head -n 1)"
+          if [ -z "$url" ]; then
+            echo "::error::Worker address not found in the deploy output"
+            exit 1
+          fi
+          # New secrets can take a few seconds to reach the Worker.
+          for attempt in 1 2 3 4 5 6 7 8; do
+            status="$(curl -sS -o setup.json -w '%{http_code}' --get --data-urlencode "key=$TELEGRAM_WEBHOOK_SECRET" "$url/setup" || true)"
+            if [ "$status" = "200" ] && grep -q '"ok":true' setup.json; then
+              echo "Telegram connected: $(cat setup.json)"
+              exit 0
+            fi
+            echo "Attempt $attempt: HTTP $status $(cat setup.json 2>/dev/null)"
+            sleep 5
+          done
+          echo "::error::Telegram did not accept the webhook. Check TELEGRAM_BOT_TOKEN (after /revoke, store the new token)."
+          exit 1
