@@ -58,7 +58,11 @@ data on any server. The child sees the same log as the parent.
 | `storage` | Settings and the local log |
 | `alarms` | The daily "still here" signal and retries when there is no internet |
 
-## Bank cards and screen sharing
+## Fake sites, bank cards and screen sharing
+
+The fake-site check reads the address, the title, headings, the text of login forms and the
+first part of the page text, on the computer. Only its verdict is used: the page content is never
+sent anywhere, and the log keeps just the site name.
 
 The card check only notices that a card number is being typed; the number stays on the page.
 The screen sharing check only refuses the request; nothing is recorded.

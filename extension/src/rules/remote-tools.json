@@ -1,25 +1,192 @@
 {
   "description": "Remote access programs that scammers ask victims to install. Domains match the host and its subdomains: any download from them counts. File patterns match the start of a lower-case file name and count only for executable files.",
   "tools": [
-    { "name": "AnyDesk", "domains": ["anydesk.com"], "files": ["anydesk"] },
-    { "name": "TeamViewer", "domains": ["teamviewer.com"], "files": ["teamviewer", "tv_quicksupport", "teamviewerqs"] },
-    { "name": "UltraViewer", "domains": ["ultraviewer.net"], "files": ["ultraviewer"] },
-    { "name": "RustDesk", "domains": ["rustdesk.com"], "files": ["rustdesk"] },
-    { "name": "ScreenConnect", "domains": ["screenconnect.com"], "files": ["screenconnect", "connectwisecontrol"] },
-    { "name": "LogMeIn Rescue", "domains": ["logmeinrescue.com", "logmein123.com"], "files": ["lmi_rescue", "logmein", "support-logmeinrescue"] },
-    { "name": "Zoho Assist", "domains": ["assist.zoho.com", "zohoassist.com", "join.zoho.com"], "files": ["zohoassist", "zoho_assist", "zaservice"] },
-    { "name": "Splashtop", "domains": ["splashtop.com"], "files": ["splashtop", "sos_"] },
-    { "name": "Supremo", "domains": ["supremocontrol.com"], "files": ["supremo"] },
-    { "name": "Ammyy Admin", "domains": ["ammyy.com"], "files": ["aa_v3", "ammyy"] },
-    { "name": "AeroAdmin", "domains": ["aeroadmin.com"], "files": ["aeroadmin"] },
-    { "name": "Remote Utilities", "domains": ["remoteutilities.com", "remoteutilities.net"], "files": ["remoteutilities", "rutserv", "rutview"] },
-    { "name": "LiteManager", "domains": ["litemanager.com", "litemanager.ru"], "files": ["litemanager", "romserver", "romviewer"] },
-    { "name": "NetSupport", "domains": ["netsupportsoftware.com"], "files": ["netsupport", "client32"] },
-    { "name": "DWService", "domains": ["dwservice.net"], "files": ["dwagent"] },
-    { "name": "Getscreen", "domains": ["getscreen.me"], "files": ["getscreen"] },
-    { "name": "RuDesktop", "domains": ["rudesktop.ru"], "files": ["rudesktop"] },
-    { "name": "HelpWire", "domains": ["helpwire.app"], "files": ["helpwire"] },
-    { "name": "Chrome Remote Desktop", "domains": ["remotedesktop.google.com"], "files": ["chromeremotedesktophost"] },
-    { "name": "ScamFuse demo", "domains": [], "files": ["scamfuse-demo-remote"] }
+    {
+      "name": "AnyDesk",
+      "domains": [
+        "anydesk.com"
+      ],
+      "files": [
+        "anydesk"
+      ]
+    },
+    {
+      "name": "TeamViewer",
+      "domains": [
+        "teamviewer.com"
+      ],
+      "files": [
+        "teamviewer",
+        "tv_quicksupport",
+        "teamviewerqs"
+      ]
+    },
+    {
+      "name": "UltraViewer",
+      "domains": [
+        "ultraviewer.net"
+      ],
+      "files": [
+        "ultraviewer"
+      ]
+    },
+    {
+      "name": "RustDesk",
+      "domains": [
+        "rustdesk.com"
+      ],
+      "files": [
+        "rustdesk"
+      ]
+    },
+    {
+      "name": "ScreenConnect",
+      "domains": [
+        "screenconnect.com"
+      ],
+      "files": [
+        "screenconnect",
+        "connectwisecontrol"
+      ]
+    },
+    {
+      "name": "LogMeIn Rescue",
+      "domains": [
+        "logmeinrescue.com",
+        "logmein123.com"
+      ],
+      "files": [
+        "lmi_rescue",
+        "logmein",
+        "support-logmeinrescue"
+      ]
+    },
+    {
+      "name": "Zoho Assist",
+      "domains": [
+        "assist.zoho.com",
+        "zohoassist.com",
+        "join.zoho.com"
+      ],
+      "files": [
+        "zohoassist",
+        "zoho_assist",
+        "zaservice"
+      ]
+    },
+    {
+      "name": "Splashtop",
+      "domains": [
+        "splashtop.com"
+      ],
+      "files": [
+        "splashtop",
+        "sos_"
+      ]
+    },
+    {
+      "name": "Supremo",
+      "domains": [
+        "supremocontrol.com"
+      ],
+      "files": [
+        "supremo"
+      ]
+    },
+    {
+      "name": "Ammyy Admin",
+      "domains": [
+        "ammyy.com"
+      ],
+      "files": [
+        "aa_v3",
+        "ammyy"
+      ]
+    },
+    {
+      "name": "AeroAdmin",
+      "domains": [
+        "aeroadmin.com"
+      ],
+      "files": [
+        "aeroadmin"
+      ]
+    },
+    {
+      "name": "Remote Utilities",
+      "domains": [
+        "remoteutilities.com",
+        "remoteutilities.net"
+      ],
+      "files": [
+        "remoteutilities",
+        "rutserv",
+        "rutview"
+      ]
+    },
+    {
+      "name": "LiteManager",
+      "domains": [
+        "litemanager.com"
+      ],
+      "files": [
+        "litemanager",
+        "romserver",
+        "romviewer"
+      ]
+    },
+    {
+      "name": "NetSupport",
+      "domains": [
+        "netsupportsoftware.com"
+      ],
+      "files": [
+        "netsupport",
+        "client32"
+      ]
+    },
+    {
+      "name": "DWService",
+      "domains": [
+        "dwservice.net"
+      ],
+      "files": [
+        "dwagent"
+      ]
+    },
+    {
+      "name": "Getscreen",
+      "domains": [
+        "getscreen.me"
+      ],
+      "files": [
+        "getscreen"
+      ]
+    },
+    {
+      "name": "HelpWire",
+      "domains": [
+        "helpwire.app"
+      ],
+      "files": [
+        "helpwire"
+      ]
+    },
+    {
+      "name": "Chrome Remote Desktop",
+      "domains": [
+        "remotedesktop.google.com"
+      ],
+      "files": [
+        "chromeremotedesktophost"
+      ]
+    },
+    {
+      "name": "ScamFuse demo",
+      "domains": [],
+      "files": [
+        "scamfuse-demo-remote"
+      ]
+    }
   ]
 }

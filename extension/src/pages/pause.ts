@@ -27,7 +27,7 @@ function speak(tr: Translator, view: PauseView): void {
   try {
     const kind = kindSuffix(view.event.kind);
     const utterance = new SpeechSynthesisUtterance(
-      `${tr.t('pause_title')} ${tr.tp(`what_${kind}`, view.profile)} ${tr.tp(`rule_${kind}`, view.profile)}`,
+      `${tr.t('pause_title')} ${whatText(tr, view)} ${tr.tp(`rule_${kind}`, view.profile)}`,
     );
     utterance.lang = toBcp47(tr.language);
     utterance.rate = 0.9;
@@ -35,6 +35,15 @@ function speak(tr: Translator, view: PauseView): void {
   } catch {
     // No voice on this computer: the screen still says everything.
   }
+}
+
+/** What happened, in one sentence. A fake site names the brand it imitates. */
+function whatText(tr: Translator, view: PauseView): string {
+  if (view.event.kind === 'phishing') {
+    if (view.event.level === 'medium') return tr.t('what_phishing_medium');
+    return view.event.detail ? tr.t('what_phishing', { brand: view.event.detail }) : tr.t('what_phishing_nobrand');
+  }
+  return tr.tp(`what_${kindSuffix(view.event.kind)}`, view.profile);
 }
 
 function renderExpired(tr: Translator): void {
@@ -178,7 +187,7 @@ function render(tr: Translator, initial: PauseView): void {
       ),
       h('main', { class: 'card' },
         h('h1', {}, tr.t('pause_title')),
-        h('p', { class: 'lead' }, tr.tp(`what_${kind}`, view.profile)),
+        h('p', { class: 'lead' }, whatText(tr, view)),
         h('p', { class: 'muted' }, tr.tp(`rule_${kind}`, view.profile)),
         relayStatus,
         h('div', { class: 'stack', style: 'margin-top: 24px' }, askBlock, closeButton),

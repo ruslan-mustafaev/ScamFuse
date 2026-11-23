@@ -134,10 +134,10 @@ export class Store {
 
   // ------------------------------------------------------------ alerts
 
-  async createAlert(row: Pick<AlertRow, 'id' | 'install_id' | 'kind' | 'host' | 'created_at'>): Promise<void> {
+  async createAlert(row: Pick<AlertRow, 'id' | 'install_id' | 'kind' | 'host' | 'created_at' | 'detail'>): Promise<void> {
     await this.db
-      .prepare('INSERT INTO alerts (id, install_id, kind, host, created_at) VALUES (?, ?, ?, ?, ?)')
-      .bind(row.id, row.install_id, row.kind, row.host, row.created_at)
+      .prepare('INSERT INTO alerts (id, install_id, kind, host, created_at, detail) VALUES (?, ?, ?, ?, ?, ?)')
+      .bind(row.id, row.install_id, row.kind, row.host, row.created_at, row.detail)
       .run();
   }
 

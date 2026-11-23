@@ -731,5 +731,95 @@
   },
   "popup_tg": {
     "message": "Alerts go to: {names}"
+  },
+  "kind_phishing": {
+    "message": "Fake site"
+  },
+  "what_phishing": {
+    "message": "This site pretends to be {brand}, but it is not. Fake sites like this steal passwords and card details."
+  },
+  "what_phishing_nobrand": {
+    "message": "This site has strong signs of a fake page made to steal passwords or card details."
+  },
+  "what_phishing_medium": {
+    "message": "This site has signs of a fake page. Do not type a password or card details before you check it."
+  },
+  "rule_phishing": {
+    "message": "Open your bank and accounts only from your own bookmark or app, never from a link in a message."
+  },
+  "msgwhat_phishing": {
+    "message": "a fake site that imitates a bank or a service"
+  },
+  "det_phishing": {
+    "message": "Fake sites (phishing)"
+  },
+  "det_phishing_hint": {
+    "message": "Checks the address and the page: look-alike names, fake login forms, wallet phrase requests."
+  },
+  "reason_homoglyph": {
+    "message": "The address uses look-alike letters"
+  },
+  "reason_lookalike": {
+    "message": "The address differs from the real one by a letter or two"
+  },
+  "reason_brand_in_domain": {
+    "message": "A brand name is mixed into someone else's address"
+  },
+  "reason_brand_subdomain": {
+    "message": "The real name is put at the start of someone else's address"
+  },
+  "reason_brand_wrong_tld": {
+    "message": "A brand name with a different ending"
+  },
+  "reason_mixed_script": {
+    "message": "Latin and Cyrillic letters are mixed in the address"
+  },
+  "reason_brand_content": {
+    "message": "The page pretends to be a known brand"
+  },
+  "reason_brand_assets": {
+    "message": "The page borrows the brand's logo from the real site"
+  },
+  "reason_foreign_form": {
+    "message": "The password is sent to a different site"
+  },
+  "reason_telegram_exfil": {
+    "message": "The page sends typed data to a Telegram bot"
+  },
+  "reason_seed_phrase": {
+    "message": "The page asks for a wallet recovery phrase"
+  },
+  "reason_phishing_words": {
+    "message": "Typical phishing phrases (account blocked, verify identity)"
+  },
+  "reason_free_hosting": {
+    "message": "The site is on a free site builder"
+  },
+  "reason_risky_tld": {
+    "message": "An address ending often used by scammers"
+  },
+  "reason_ip_host": {
+    "message": "The address is a bare IP number"
+  },
+  "reason_insecure_password": {
+    "message": "A password field on an unencrypted page"
+  },
+  "reason_many_hyphens": {
+    "message": "An unusually long address with many hyphens"
+  },
+  "popup_site_title": {
+    "message": "This page"
+  },
+  "popup_site_ok": {
+    "message": "No signs of a fake site found."
+  },
+  "popup_site_medium": {
+    "message": "Suspicious: {reasons}"
+  },
+  "popup_site_high": {
+    "message": "Looks like a fake site: {reasons}"
+  },
+  "popup_site_na": {
+    "message": "This page cannot be checked."
   }
 }

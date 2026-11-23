@@ -5,8 +5,9 @@ import siteRules from '../rules/sites.json' with { type: 'json' };
 import { isVisibleIn, scoreClipboard } from '../core/clipboard-score.ts';
 import { hostMatches } from '../core/domains.ts';
 import { isCardField, looksLikeCardNumber } from '../core/cards.ts';
+import { analyzeHost, type PageFacts, scoreSite } from '../core/site-risk.ts';
 import { BEHAVIOUR_WEIGHTS, scoreFakeAlert } from '../core/fake-alert-score.ts';
-import type { ContentMessage, PageStatus, SignalKind } from '../core/types.ts';
+import type { ContentMessage, Level, PageStatus, SignalKind, SiteCheck } from '../core/types.ts';
 
 const VERDICT_ATTRIBUTE = 'data-scamfuse-verdict';
 const REPORT_INTERVAL_MS = 10_000;
@@ -23,6 +24,7 @@ const status: PageStatus = {
   fakeAlert: true,
   screenShare: !hostMatches(host, siteRules.meetingSites),
   cardEntry: false,
+  phishing: true,
   safeText: FALLBACK_SAFE_TEXT,
 };
 
@@ -42,11 +44,11 @@ if (/^https?:$/.test(location.protocol) || location.protocol === 'file:' || loca
 }
 
 const lastReport: Record<string, number> = {};
-function report(kind: SignalKind, reasons: string[]): void {
+function report(kind: SignalKind, reasons: string[], level?: Level, detail?: string): void {
   const now = Date.now();
   if (now - (lastReport[kind] ?? 0) < REPORT_INTERVAL_MS) return;
   lastReport[kind] = now;
-  void message({ type: 'signal', kind, reasons });
+  void message({ type: 'signal', kind, reasons, level, detail });
 }
 
 function visibleText(): string {
@@ -169,6 +171,138 @@ document.addEventListener(
   true,
 );
 
+// ------------------------------------------------------------------ fake sites (phishing)
+
+const SEED_WORDS =
+  /(seed|recovery|secret|mnemonic)\s+phrase|\b(12|24)[\s-]word|сид-?фраз|секретн\w*\s+фраз|мнемоническ\w*\s+фраз|фраз\w*\s+восстановлени/i;
+const ONE_TIME_CODE = /(otp|one.?time|sms.?code|verification.?code|код.?из.?(смс|sms)|одноразов)/i;
+const SENSITIVE_SELECTOR = 'input[type="password"], input[autocomplete~="cc-number"], input[autocomplete="one-time-code"], textarea';
+
+function fieldHints(field: HTMLInputElement) {
+  return {
+    autocomplete: field.autocomplete ?? '',
+    name: field.name ?? '',
+    id: field.id ?? '',
+    placeholder: field.placeholder ?? '',
+    label: field.getAttribute('aria-label') ?? '',
+  };
+}
+
+function hostOfUrl(value: string | null | undefined): string {
+  if (!value) return '';
+  try {
+    return new URL(value, location.href).hostname.toLowerCase().replace(/^www\./, '');
+  } catch {
+    return '';
+  }
+}
+
+/** Reads what the check needs from the page. Nothing of it leaves the page. */
+function collectFacts(): PageFacts {
+  const fields = Array.from(document.querySelectorAll('input, textarea')).slice(0, 300);
+  const inputs = fields.filter((field): field is HTMLInputElement => field instanceof HTMLInputElement);
+  const passwords = inputs.filter((field) => field.type === 'password');
+  const cards = inputs.filter((field) => isCardField(fieldHints(field)));
+  const codes = inputs.filter(
+    (field) => field.autocomplete === 'one-time-code' || ONE_TIME_CODE.test(`${field.name} ${field.id} ${field.placeholder}`),
+  );
+  const bodyText = (document.body?.innerText ?? '').slice(0, 8000);
+  const textInputs = inputs.filter((field) => field.type === 'text' || field.type === 'password').length;
+  const hasTextarea = fields.some((field) => field instanceof HTMLTextAreaElement);
+
+  const formTexts: string[] = [];
+  const actions: string[] = [];
+  for (const field of [...passwords, ...cards].slice(0, 5)) {
+    const form = field.form ?? field.closest('div, section, main');
+    if (form) formTexts.push(((form as HTMLElement).innerText ?? '').slice(0, 1000));
+    if (field.form && passwords.includes(field)) actions.push(hostOfUrl(field.form.getAttribute('action') || location.href));
+  }
+  const headings = [
+    ...Array.from(document.querySelectorAll('h1, h2')).slice(0, 6).map((node) => (node as HTMLElement).innerText ?? ''),
+    ...Array.from(document.images).slice(0, 10).map((image) => image.alt),
+  ].join(' ');
+  const assetHosts = [
+    ...Array.from(document.images).slice(0, 40).map((image) => hostOfUrl(image.currentSrc || image.src)),
+    ...Array.from(document.querySelectorAll('link[rel~="icon"]')).map((link) => hostOfUrl(link.getAttribute('href'))),
+  ].filter(Boolean);
+  const telegramBot =
+    Array.from(document.scripts).some((script) => !script.src && (script.textContent ?? '').includes('api.telegram.org/bot')) ||
+    actions.some((action) => action === 'api.telegram.org');
+
+  return {
+    host,
+    https: location.protocol === 'https:',
+    title: document.title,
+    headings,
+    formText: formTexts.join(' '),
+    hasPassword: passwords.length > 0,
+    hasCard: cards.length > 0,
+    hasOneTimeCode: codes.length > 0,
+    asksSeedPhrase: SEED_WORDS.test(bodyText) && (hasTextarea || textInputs >= 12),
+    formActionHosts: actions,
+    assetHosts,
+    telegramBot,
+    bodyText,
+  };
+}
+
+let siteCheck: SiteCheck = { level: 'low', reasons: [], brand: null };
+let siteReported = '';
+const domainMarkers = analyzeHost(host).markers.length > 0;
+
+function checkSite(): SiteCheck {
+  if (!/^https?:$/.test(location.protocol)) return siteCheck;
+  const verdict = scoreSite(collectFacts());
+  siteCheck = { level: verdict.level, reasons: verdict.reasons, brand: verdict.brand };
+  if (siteCheck.level !== siteReported) {
+    siteReported = siteCheck.level;
+    void message({ type: 'siteReport', level: siteCheck.level });
+  }
+  if (status.phishing && siteCheck.level === 'high') report('phishing', siteCheck.reasons, 'high', siteCheck.brand ?? undefined);
+  return siteCheck;
+}
+
+function scheduleSiteCheck(): void {
+  if (!isTop) return;
+  // Most pages have nothing to steal and an ordinary address: skip the work for them.
+  if (!domainMarkers && !document.querySelector(SENSITIVE_SELECTOR) && !SEED_WORDS.test(document.title)) {
+    if (siteReported !== 'low') {
+      siteReported = 'low';
+      void message({ type: 'siteReport', level: 'low' });
+    }
+    return;
+  }
+  checkSite();
+}
+
+// Before anything is typed into a password, card, code or phrase field on a suspicious page.
+document.addEventListener(
+  'focusin',
+  (event) => {
+    if (!isTop || !status.phishing) return;
+    const field = event.target;
+    const sensitive =
+      field instanceof HTMLTextAreaElement ||
+      (field instanceof HTMLInputElement &&
+        (field.type === 'password' || isCardField(fieldHints(field)) || field.autocomplete === 'one-time-code'));
+    if (!sensitive) return;
+    const verdict = checkSite();
+    if (verdict.level === 'medium') report('phishing', verdict.reasons, 'medium', verdict.brand ?? undefined);
+  },
+  true,
+);
+
+// The toolbar window asks how this page looks.
+try {
+  chrome.runtime.onMessage.addListener((request: unknown, sender, respond) => {
+    if (!isTop || sender.id !== chrome.runtime.id || (request as { type?: string })?.type !== 'siteCheck') return false;
+    respond(checkSite());
+    return false;
+  });
+} catch {
+  // The extension was updated; this old copy stays silent.
+}
+
 // ------------------------------------------------------------------ fake virus alerts
 
 const behaviour = new Set<string>();
@@ -210,6 +344,8 @@ function startPageChecks(): void {
   evaluateFakeAlert();
   setTimeout(evaluateFakeAlert, 1500);
   setTimeout(evaluateFakeAlert, 4000);
+  setTimeout(scheduleSiteCheck, 800);
+  setTimeout(scheduleSiteCheck, 3000);
 }
 
 if (document.readyState === 'loading') {

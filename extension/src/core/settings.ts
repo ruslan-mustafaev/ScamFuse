@@ -13,6 +13,7 @@ export const DETECTORS: readonly DetectorId[] = [
   'programDownload',
   'screenShare',
   'cardEntry',
+  'phishing',
 ];
 
 export const ADVICE_DELAY_SECONDS = 15;
@@ -31,6 +32,7 @@ export function defaultDetectors(profile: Profile): Record<DetectorId, boolean> 
     programDownload: profile === 'child',
     screenShare: true,
     cardEntry: profile === 'child',
+    phishing: true,
   };
 }
 

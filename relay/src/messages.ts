@@ -6,7 +6,7 @@ import { defang } from './util.ts';
 
 export function langOf(code: string | undefined | null): Lang {
   const base = (code ?? '').toLowerCase().split(/[-_]/)[0] ?? '';
-  return ['ru', 'uk', 'be', 'kk', 'uz'].includes(base) ? 'ru' : 'en';
+  return base === 'ru' ? 'ru' : 'en';
 }
 
 const TEXT = {
@@ -19,6 +19,7 @@ const TEXT = {
       'program-download': 'a program from an unofficial site',
       'screen-share': 'a site asks to share the screen',
       'card-entry': 'bank card details are being entered on a site',
+      phishing: 'opened a fake site that imitates a bank or a service',
       ask: 'asks you to check a page',
       test: 'test alert',
     } as Record<AlertKind, string>,
@@ -30,9 +31,11 @@ const TEXT = {
       'program-download': 'Programs from unofficial sites often steal accounts.',
       'screen-share': 'A shared screen shows passwords and bank codes.',
       'card-entry': 'A purchase or a payment is about to happen.',
+      phishing: 'Such sites steal passwords and card details.',
       ask: '',
       test: 'Everything works. Real alerts look like this.',
     } as Record<AlertKind, string>,
+    phishingBrand: (brand: string) => `opened a fake site that imitates ${brand}`,
     callNow: 'Call now.',
     site: 'Site',
     time: 'Time',
@@ -89,6 +92,7 @@ const TEXT = {
       'program-download': 'программа с неофициального сайта',
       'screen-share': 'сайт просит показать экран',
       'card-entry': 'на сайте вводят данные банковской карты',
+      phishing: 'открыт поддельный сайт, похожий на банк или сервис',
       ask: 'просит проверить страницу',
       test: 'пробная тревога',
     } as Record<AlertKind, string>,
@@ -100,9 +104,11 @@ const TEXT = {
       'program-download': 'Программы с неофициальных сайтов часто крадут аккаунты.',
       'screen-share': 'На показанном экране видны пароли и коды из банка.',
       'card-entry': 'Сейчас будет покупка или платёж.',
+      phishing: 'Такие сайты крадут пароли и данные карт.',
       ask: '',
       test: 'Всё работает. Так будут выглядеть настоящие тревоги.',
     } as Record<AlertKind, string>,
+    phishingBrand: (brand: string) => `открыт поддельный сайт, похожий на ${brand}`,
     callNow: 'Позвоните прямо сейчас.',
     site: 'Сайт',
     time: 'Время',
@@ -174,13 +180,15 @@ export interface AlertText {
   at: number;
   timeZone: string;
   code?: string;
+  detail?: string | null;
 }
 
-const URGENT: ReadonlySet<AlertKind> = new Set(['remote-download', 'clipboard', 'fake-alert', 'screen-share']);
+const URGENT: ReadonlySet<AlertKind> = new Set(['remote-download', 'clipboard', 'fake-alert', 'screen-share', 'phishing']);
 
 export function alertMessage(lang: string, alert: AlertText): string {
   const t = texts(lang);
-  const lines = [`${alert.kind === 'test' ? 'ℹ️' : '⚠️'} ${alert.installName}: ${t.what[alert.kind]}`];
+  const what = alert.kind === 'phishing' && alert.detail ? t.phishingBrand(alert.detail) : t.what[alert.kind];
+  const lines = [`${alert.kind === 'test' ? 'ℹ️' : '⚠️'} ${alert.installName}: ${what}`];
   if (alert.host) lines.push(`${t.site}: ${defang(alert.host)}`);
   lines.push(`${t.time}: ${formatTime(alert.at, lang, alert.timeZone)} (${t.deviceTime})`);
   if (t.meaning[alert.kind]) lines.push('', t.meaning[alert.kind]);

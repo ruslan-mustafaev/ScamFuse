@@ -80,6 +80,7 @@ const SIGNAL_DETECTORS: Record<SignalKind, DetectorId> = {
   'fake-alert': 'fakeAlert',
   'screen-share': 'screenShare',
   'card-entry': 'cardEntry',
+  phishing: 'phishing',
 };
 
 // ---------------------------------------------------------------- lifecycle
@@ -147,6 +148,7 @@ interface PauseRequest {
   downloadId?: number;
   ownTab?: boolean;
   mute?: boolean;
+  detail?: string;
 }
 
 async function openPause(request: PauseRequest): Promise<void> {
@@ -162,6 +164,10 @@ async function openPause(request: PauseRequest): Promise<void> {
       createdAt: now,
       tabId: request.tabId ?? repeat.tabId,
       url: request.url || repeat.url,
+      // The newest findings describe what is on the screen now.
+      level: request.level,
+      reasons: request.reasons,
+      detail: request.detail,
     };
   } else {
     event = {
@@ -176,6 +182,7 @@ async function openPause(request: PauseRequest): Promise<void> {
       ownTab: request.ownTab,
       outcome: 'pending',
       reasons: request.reasons,
+      detail: request.detail,
     };
     const log = await getLog();
     await saveLog(
@@ -219,7 +226,7 @@ async function notifyGuardian(eventId: string): Promise<PauseEvent['alertState']
   });
   if (!reserved) return (await getEvents())[eventId]?.alertState;
 
-  const alertId = await sendAlert(reserved.event.kind, reserved.event.host, reserved.code);
+  const alertId = await sendAlert(reserved.event.kind, reserved.event.host, reserved.code, reserved.event.detail);
   await serial(async () => {
     const events = await getEvents();
     const event = events[eventId];
@@ -697,6 +704,10 @@ async function pageStatus(sender: chrome.runtime.MessageSender): Promise<PageSta
       settings.enabled &&
       settings.detectors.cardEntry &&
       !(await siteAllowed(settings, host, 'card-entry')),
+    phishing:
+      settings.enabled &&
+      settings.detectors.phishing &&
+      !(await siteAllowed(settings, host, 'phishing')),
     safeText: tr.t('clip_safe'),
   };
 }
@@ -716,17 +727,32 @@ async function signal(
   if (await siteAllowed(settings, host, kind)) return;
   if (kind === 'clipboard' && hostMatches(host, siteRules.developerSites)) return;
   if (kind === 'screen-share' && hostMatches(host, siteRules.meetingSites)) return;
+  const detail = typeof message.detail === 'string' ? message.detail.replace(/[\u0000-\u001f]/g, '').slice(0, 40) : undefined;
   await serial(() =>
     openPause({
       kind,
-      level: 'high',
+      level: kind === 'phishing' && message.level === 'medium' ? 'medium' : 'high',
       host,
       url,
       reasons: cleanReasons(message.reasons),
       tabId,
       mute: kind === 'fake-alert',
+      detail,
     }),
   );
+}
+
+/** A yellow "!" on the toolbar icon while a suspicious page is open in that tab. */
+async function siteReport(level: string, sender: chrome.runtime.MessageSender): Promise<void> {
+  const tabId = sender.tab?.id;
+  if (tabId === undefined || sender.frameId !== 0) return;
+  if (level === 'medium' || level === 'high') {
+    await chrome.action.setBadgeText({ tabId, text: '!' });
+    await chrome.action.setBadgeBackgroundColor({ tabId, color: '#DC6803' });
+  } else {
+    // null returns this tab to the common badge (the number of stopped actions today).
+    await chrome.action.setBadgeText({ tabId, text: null as unknown as string });
+  }
 }
 
 // ---------------------------------------------------------------- router
@@ -745,6 +771,8 @@ chrome.runtime.onMessage.addListener((message: unknown, sender, sendResponse) =>
     work = pageStatus(sender);
   } else if (typed.type === 'signal') {
     work = signal(message as Extract<ContentMessage, { type: 'signal' }>, sender);
+  } else if (typed.type === 'siteReport') {
+    work = siteReport(String((message as { level?: unknown }).level), sender);
   } else {
     return false;
   }

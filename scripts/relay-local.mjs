@@ -16,7 +16,7 @@ export async function startLocalRelay({ port = 0, webhookSecret = 'local-webhook
   const telegram = fakeTelegram();
   let offset = 0;
   const deps = {
-    db: sqliteD1(':memory:', [join(root, 'relay/migrations/0001_init.sql')]),
+    db: sqliteD1(':memory:', ['0001_init.sql', '0002_alert_detail.sql'].map((file) => join(root, 'relay/migrations', file))),
     telegram,
     botUsername: 'ScamFuseBot',
     webhookSecret,

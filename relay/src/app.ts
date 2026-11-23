@@ -11,7 +11,7 @@ const DAY_MS = 24 * 60 * MINUTE_MS;
 const PAIRING_MS = 10 * MINUTE_MS;
 
 const ALERT_KINDS: ReadonlySet<string> = new Set<AlertKind>([
-  'remote-site', 'remote-download', 'clipboard', 'fake-alert', 'program-download', 'screen-share', 'card-entry', 'ask',
+  'remote-site', 'remote-download', 'clipboard', 'fake-alert', 'program-download', 'screen-share', 'card-entry', 'phishing', 'ask',
 ]);
 const EVENT_TYPES: ReadonlySet<string> = new Set<DeviceEventType>(['disabled', 'pin-locked']);
 const TOKEN = /^[A-Za-z0-9_-]{43}$/;
@@ -169,7 +169,14 @@ export async function handle(request: Request, deps: Deps): Promise<Response> {
     const code = typeof input.code === 'string' && /^\d{6}$/.test(input.code) ? input.code : undefined;
     if ((await store.listGuardians(install.id)).length === 0) return error('no-guardians', 409);
     if (!(await store.allow(`alerts:${install.id}`, 20, DAY_MS, now))) return error('rate-limited', 429);
-    const alert = { id: randomId(), install_id: install.id, kind, host: cleanHost(input.host), created_at: now };
+    const alert = {
+      id: randomId(),
+      install_id: install.id,
+      kind,
+      host: cleanHost(input.host),
+      created_at: now,
+      detail: cleanText(input.detail, 40) || null,
+    };
     await store.createAlert(alert);
     await store.touch(install.id, now);
     const delivered = await deliverAlert(deps, store, install, alert, code);

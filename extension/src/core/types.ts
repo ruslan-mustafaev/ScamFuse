@@ -9,7 +9,8 @@ export type DetectorId =
   | 'fakeAlert'
   | 'programDownload'
   | 'screenShare'
-  | 'cardEntry';
+  | 'cardEntry'
+  | 'phishing';
 
 export type EventKind =
   | 'remote-site'
@@ -18,7 +19,8 @@ export type EventKind =
   | 'fake-alert'
   | 'program-download'
   | 'screen-share'
-  | 'card-entry';
+  | 'card-entry'
+  | 'phishing';
 
 export type Level = 'high' | 'medium';
 export type Outcome = 'pending' | 'allowed' | 'blocked';
@@ -84,6 +86,8 @@ export interface PauseEvent {
   reply?: string;
   replyBy?: string;
   decidedByName?: string;
+  /** For fake sites: the brand the site imitates. */
+  detail?: string;
 }
 
 /** What the local log keeps: no full addresses, no page content. */
@@ -110,14 +114,24 @@ export interface PageStatus {
   fakeAlert: boolean;
   screenShare: boolean;
   cardEntry: boolean;
+  phishing: boolean;
   safeText: string;
 }
 
 export type ContentMessage =
   | { type: 'pageStatus' }
-  | { type: 'signal'; kind: SignalKind; reasons: string[] };
+  | { type: 'signal'; kind: SignalKind; reasons: string[]; level?: Level; detail?: string }
+  | { type: 'siteReport'; level: SiteLevel };
 
-export type SignalKind = 'clipboard' | 'fake-alert' | 'screen-share' | 'card-entry';
+export type SignalKind = 'clipboard' | 'fake-alert' | 'screen-share' | 'card-entry' | 'phishing';
+export type SiteLevel = 'low' | 'medium' | 'high';
+
+/** The page check result shown in the toolbar window. */
+export interface SiteCheck {
+  level: SiteLevel;
+  reasons: string[];
+  brand: string | null;
+}
 
 export interface PauseView {
   event: PauseEvent;

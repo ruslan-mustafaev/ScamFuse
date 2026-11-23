@@ -15,6 +15,13 @@ and it sees only what happens inside the browser.
 - Executable downloads from unofficial sites (child profile).
 - Screen sharing requested by a site that is not a known meeting service.
 - Bank card numbers typed on a site (child profile).
+- Fake sites (phishing), by markers on the address and on the page:
+  look-alike letters and one-letter differences from 36 commonly imitated brands, a brand name
+  mixed into another address or put at its start, mixed Latin and Cyrillic, a known brand's name and
+  logo on a page that asks for a password, a card, a one-time code or a wallet phrase, passwords sent
+  to another site or to a Telegram bot, typical phishing phrases (English and Russian), free site
+  builders, address endings popular with scammers, bare IP addresses, password fields without
+  encryption. A clear fake is stopped when it opens; a suspicious page before anything is typed.
 
 ## Not covered
 
@@ -27,6 +34,9 @@ and it sees only what happens inside the browser.
   that is silent for 7 days. On Chromebooks, Family Link can block removal.
 - Commands typed by hand from a video or a phone call.
 - Archives: a program inside a `.zip` is not seen until it is unpacked outside the browser.
+- Fake sites of brands that are not in the list and that copy no known brand's name: they are caught
+  only by the other markers. Domain age and lists of known phishing addresses are not used yet
+  (planned with the rule updates).
 
 ## How the page scripts are protected
 

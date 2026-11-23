@@ -148,7 +148,7 @@ export async function deliverAlert(
   deps: Deps,
   store: Store,
   install: InstallRow,
-  alert: Pick<AlertRow, 'id' | 'kind' | 'host' | 'created_at'>,
+  alert: Pick<AlertRow, 'id' | 'kind' | 'host' | 'created_at' | 'detail'>,
   code?: string,
 ): Promise<number> {
   const guardians = await store.listGuardians(install.id);
@@ -161,6 +161,7 @@ export async function deliverAlert(
       at: alert.created_at,
       timeZone: install.time_zone,
       code,
+      detail: alert.detail,
     });
     const keyboard = alert.kind === 'test' || alert.kind === 'ask' ? undefined : decisionKeyboard(guardian.language, alert.id);
     const messageId = await deps.telegram.sendMessage(guardian.chat_id, text, keyboard);
@@ -232,6 +233,7 @@ async function handleCallback(callback: TgCallback, deps: Deps, store: Store): P
       host: alert.host,
       at: alert.created_at,
       timeZone: install.time_zone,
+      detail: alert.detail,
     });
     await deps.telegram.editMessage(
       message.chat_id,

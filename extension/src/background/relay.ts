@@ -164,12 +164,12 @@ export async function linkedGuardians(): Promise<string[]> {
   return (await getCredentials())?.guardians ?? [];
 }
 
-export async function sendAlert(kind: EventKind | 'ask', host: string, code?: string): Promise<string | null> {
+export async function sendAlert(kind: EventKind | 'ask', host: string, code?: string, detail?: string): Promise<string | null> {
   const credentials = await getCredentials();
   if (!credentials || credentials.guardians.length === 0) return null;
   const { status, data } = await request<{ id: string }>(credentials, credentials.url, '/v1/alerts', {
     method: 'POST',
-    body: { kind, host, code },
+    body: { kind, host, code, detail },
   });
   return status === 201 && data?.id ? data.id : null;
 }

@@ -49,8 +49,8 @@ test('chat links open a chat with one person and the text filled in', () => {
     'https://wa.me/421900123456?text=Hi!%0ASite%3A%20evil%5B.%5Dcom',
   );
   assert.equal(
-    buildAskLink({ channel: 'telegram', phone: '+7 900 123-45-67', email: '' }, 's', 'x'),
-    'https://t.me/+79001234567?text=x',
+    buildAskLink({ channel: 'telegram', phone: '+380 67 123 4567', email: '' }, 's', 'x'),
+    'https://t.me/+380671234567?text=x',
   );
   assert.equal(
     buildAskLink({ channel: 'email', phone: '', email: 'dad@example.com' }, 'Check', 'x y'),
@@ -59,7 +59,7 @@ test('chat links open a chat with one person and the text filled in', () => {
   assert.equal(buildAskLink({ channel: 'whatsapp', phone: '12', email: '' }, 's', 'x'), null);
   assert.equal(canAsk({ channel: 'email', phone: '+421900123456', email: '' }), false);
   assert.equal(telLink('+421 900 123 456'), 'tel:+421900123456');
-  assert.equal(formatPhone('+7 900 123-45-67'), '+7 900 123-45-67');
+  assert.equal(formatPhone('+380 67 123 4567'), '+380 67 123 4567');
   assert.equal(formatPhone('421900123456'), '+421900123456');
   assert.equal(formatPhone('00421 900 123 456'), '+421 900 123 456');
 });

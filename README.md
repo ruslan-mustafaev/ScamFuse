@@ -23,6 +23,7 @@ It is made for parents and grandparents, for children and teenagers, and for you
 | A "bank employee" asks to install AnyDesk, TeamViewer and similar | Pauses the download and the program's site | All |
 | A fake "I am not a robot" check slips a command into the clipboard ("ClickFix") | Replaces the command with a harmless line and pauses the page | All |
 | A page pretends the computer is infected and shows a "support" number | Leaves the page, mutes it and pauses | All |
+| A fake login or payment page: look-alike address (`paypa1.com`, Cyrillic letters, `paypal.com.verify.top`), a copied brand page, a password sent to a Telegram bot, a wallet recovery phrase request | Stops a clear fake at once; on a suspicious page, pauses before the password is typed; the toolbar window shows the page check | All |
 | A "support specialist" asks to share the screen on an unknown site | Refuses the request and pauses; meeting services are not affected | All |
 | Cheats, mods and cracked games from unofficial sites | Pauses the download | Child |
 | Bank card details typed on a site | Pauses before the purchase | Child |

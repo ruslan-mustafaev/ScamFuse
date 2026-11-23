@@ -30,6 +30,7 @@ export type AlertKind =
   | 'program-download'
   | 'screen-share'
   | 'card-entry'
+  | 'phishing'
   | 'ask'
   | 'test';
 
@@ -77,6 +78,7 @@ export interface AlertRow {
   decided_at: number | null;
   reply: string | null;
   reply_by: string | null;
+  detail: string | null;
 }
 
 export interface TelegramButton {

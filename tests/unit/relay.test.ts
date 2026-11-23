@@ -6,7 +6,7 @@ import type { Deps } from '../../relay/src/types.ts';
 import { fakeTelegram, type FakeTelegram } from '../../relay/dev/fake-telegram.ts';
 import { sqliteD1 } from '../../relay/dev/sqlite-d1.ts';
 
-const MIGRATION = join(import.meta.dirname, '../../relay/migrations/0001_init.sql');
+const MIGRATIONS = ['0001_init.sql', '0002_alert_detail.sql'].map((file) => join(import.meta.dirname, '../../relay/migrations', file));
 const SECRET = 'webhook-secret-123';
 const BASE = 'https://relay.test';
 const GUARDIAN = 5001;
@@ -15,7 +15,7 @@ function setup() {
   let clock = Date.UTC(2026, 10, 23, 12, 0, 0);
   const telegram = fakeTelegram();
   const deps: Deps = {
-    db: sqliteD1(':memory:', [MIGRATION]),
+    db: sqliteD1(':memory:', MIGRATIONS),
     telegram,
     botUsername: 'ScamFuseBot',
     webhookSecret: SECRET,
@@ -74,7 +74,7 @@ function setup() {
 
 async function registered() {
   const ctx = setup();
-  const result = await ctx.call('POST', '/v1/installs', { ...ctx.install, name: 'Мама, ноутбук', language: 'ru', timeZone: 'Europe/Moscow' }, {});
+  const result = await ctx.call('POST', '/v1/installs', { ...ctx.install, name: 'Мама, ноутбук', language: 'ru', timeZone: 'Europe/Bratislava' }, {});
   assert.equal(result.status, 201);
   return ctx;
 }
@@ -142,7 +142,7 @@ test('an alert reaches the trusted person with buttons and the unlock code, with
   assert.ok(message);
   assert.match(message.text, /Мама, ноутбук: попытка установить программу удалённого доступа/);
   assert.match(message.text, /anydesk\[\.\]com/);
-  assert.match(message.text, /15:00 \(по часам устройства\)/, 'Moscow time');
+  assert.match(message.text, /13:00 \(по часам устройства\)/, 'Bratislava time');
   assert.match(message.text, /483 920/);
   assert.equal(message.keyboard?.[0]?.[0]?.callback_data, `d:${result.data.id}:a`);
 });
@@ -237,4 +237,11 @@ test('setup registers the webhook only with the secret key', async () => {
   assert.equal((await ctx.call('GET', '/setup?key=wrong', undefined, {})).status, 403);
   const ok = await ctx.call('GET', `/setup?key=${SECRET}`, undefined, {});
   assert.equal(ok.data.webhook, `${BASE}/telegram/webhook`);
+});
+
+test('a fake site alert names the brand it imitates', async () => {
+  const ctx = await paired();
+  await ctx.call('POST', '/v1/alerts', { kind: 'phishing', host: 'paypa1.com', detail: 'PayPal' });
+  assert.match(ctx.telegram.lastTo(GUARDIAN)?.text ?? '', /открыт поддельный сайт, похожий на PayPal/);
+  assert.match(ctx.telegram.lastTo(GUARDIAN)?.text ?? '', /paypa1\[\.\]com/);
 });

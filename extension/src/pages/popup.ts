@@ -3,8 +3,8 @@
 import { DEMO_URL } from '../core/config.ts';
 import { buildAskLink, buildAskMessage, canAsk, kindKey } from '../core/contact.ts';
 import { hostOf } from '../core/domains.ts';
-import type { PublicState } from '../core/types.ts';
-import { h, languageSelect, mount, send, translator } from './common.ts';
+import type { PublicState, SiteCheck } from '../core/types.ts';
+import { h, languageSelect, mount, reasonLabel, send, translator } from './common.ts';
 
 async function start(): Promise<void> {
   const state = await send<PublicState>({ type: 'getState' });
@@ -37,6 +37,26 @@ async function start(): Promise<void> {
     }
   }
 
+  // How the open page looks to the fake-site check.
+  let check: SiteCheck | null = null;
+  if (tab?.id !== undefined && pageHost) {
+    check = await (chrome.tabs.sendMessage(tab.id, { type: 'siteCheck' }, { frameId: 0 }) as Promise<SiteCheck>).catch(() => null);
+  }
+  const reasons = check ? check.reasons.slice(0, 3).map((code) => reasonLabel(tr, code)).join('; ') : '';
+  const siteBlock = h('div', { id: 'site-check', style: 'margin: 10px 0' },
+    h('strong', { class: 'small' }, `${tr.t('popup_site_title')}: ${pageHost || '—'}`),
+    h('p', {
+      class: check && check.level !== 'low' ? 'notice error small' : 'muted small',
+      style: 'margin: 4px 0 0',
+    },
+      !check
+        ? tr.t('popup_site_na')
+        : check.level === 'low'
+          ? tr.t('popup_site_ok')
+          : tr.t(check.level === 'high' ? 'popup_site_high' : 'popup_site_medium', { reasons }),
+    ),
+  );
+
   const recent = state.log.slice(0, 3);
   const recentBlock = recent.length
     ? h('ul', { class: 'plain small' },
@@ -62,6 +82,7 @@ async function start(): Promise<void> {
       state.relay.guardians.length
         ? h('p', { class: 'small', style: 'margin: 10px 0 0' }, tr.t('popup_tg', { names: state.relay.guardians.join(', ') }))
         : null,
+      siteBlock,
       h('p', { class: 'small', style: 'margin: 10px 0' }, tr.t('popup_today', { count: state.todayCount })),
       actions,
       h('h2', { style: 'font-size: 16px; margin: 16px 0 6px' }, tr.t('popup_recent')),

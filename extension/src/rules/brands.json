@@ -1,0 +1,661 @@
+{
+  "description": "Brands that phishing pages imitate. 'domains' are official (the host or its subdomains). 'marks' are lower-case phrases that name the brand on a page. 'anyCountry' brands also own their name under ordinary country domains (google.de). Order: most imitated first. 'word' brands are also ordinary words (booking, discord): only look-alike letters count for them, not one-letter differences.",
+  "brands": [
+    {
+      "name": "Microsoft",
+      "domains": [
+        "microsoft.com",
+        "microsoftonline.com",
+        "live.com",
+        "outlook.com",
+        "office.com",
+        "office365.com",
+        "microsoft365.com",
+        "sharepoint.com",
+        "onedrive.com",
+        "onmicrosoft.com",
+        "msauth.net",
+        "msftauth.net",
+        "aka.ms",
+        "bing.com",
+        "msn.com",
+        "xbox.com",
+        "skype.com",
+        "azure.com",
+        "windows.net",
+        "hotmail.com"
+      ],
+      "marks": [
+        "microsoft account",
+        "microsoft 365",
+        "office 365",
+        "outlook",
+        "onedrive",
+        "sharepoint"
+      ],
+      "label": "microsoft"
+    },
+    {
+      "name": "LinkedIn",
+      "domains": [
+        "linkedin.com",
+        "licdn.com"
+      ],
+      "marks": [
+        "linkedin"
+      ],
+      "label": "linkedin",
+      "anyCountry": true
+    },
+    {
+      "name": "Google",
+      "domains": [
+        "google.com",
+        "gmail.com",
+        "youtube.com",
+        "gstatic.com",
+        "googleapis.com",
+        "googleusercontent.com",
+        "withgoogle.com",
+        "youtu.be",
+        "goo.gl",
+        "googlemail.com"
+      ],
+      "marks": [
+        "google account",
+        "gmail",
+        "sign in - google",
+        "google drive",
+        "google docs"
+      ],
+      "label": "google",
+      "anyCountry": true
+    },
+    {
+      "name": "Apple",
+      "domains": [
+        "apple.com",
+        "icloud.com",
+        "me.com",
+        "mzstatic.com",
+        "apple.co"
+      ],
+      "marks": [
+        "apple id",
+        "apple account",
+        "icloud",
+        "find my iphone"
+      ],
+      "label": "apple",
+      "word": true
+    },
+    {
+      "name": "Amazon",
+      "domains": [
+        "amazon.com",
+        "amazon.co.uk",
+        "amazon.de",
+        "amazon.fr",
+        "amazon.it",
+        "amazon.es",
+        "amazon.nl",
+        "amazon.pl",
+        "amazon.se",
+        "amazon.com.tr",
+        "amazon.ca",
+        "amazon.co.jp",
+        "amazon.in",
+        "amazon.com.br",
+        "amazon.com.au",
+        "amazonaws.com",
+        "media-amazon.com",
+        "primevideo.com",
+        "aws.amazon.com"
+      ],
+      "marks": [
+        "amazon account",
+        "amazon prime",
+        "amazon.com"
+      ],
+      "label": "amazon",
+      "anyCountry": true,
+      "word": true
+    },
+    {
+      "name": "Dropbox",
+      "domains": [
+        "dropbox.com",
+        "dropboxusercontent.com",
+        "db.tt"
+      ],
+      "marks": [
+        "dropbox"
+      ],
+      "label": "dropbox"
+    },
+    {
+      "name": "Facebook",
+      "domains": [
+        "facebook.com",
+        "fb.com",
+        "fbcdn.net",
+        "messenger.com",
+        "meta.com",
+        "facebook.net"
+      ],
+      "marks": [
+        "facebook",
+        "meta business",
+        "meta verified"
+      ],
+      "label": "facebook"
+    },
+    {
+      "name": "Instagram",
+      "domains": [
+        "instagram.com",
+        "cdninstagram.com"
+      ],
+      "marks": [
+        "instagram"
+      ],
+      "label": "instagram"
+    },
+    {
+      "name": "WhatsApp",
+      "domains": [
+        "whatsapp.com",
+        "whatsapp.net",
+        "wa.me"
+      ],
+      "marks": [
+        "whatsapp"
+      ],
+      "label": "whatsapp"
+    },
+    {
+      "name": "Netflix",
+      "domains": [
+        "netflix.com",
+        "nflxext.com",
+        "nflximg.net"
+      ],
+      "marks": [
+        "netflix"
+      ],
+      "label": "netflix"
+    },
+    {
+      "name": "Steam",
+      "domains": [
+        "steampowered.com",
+        "steamcommunity.com",
+        "steamstatic.com",
+        "steam-chat.com",
+        "steamgames.com"
+      ],
+      "marks": [
+        "steam community",
+        "steam guard",
+        "steam account",
+        "steampowered"
+      ],
+      "label": "steamcommunity"
+    },
+    {
+      "name": "Steam",
+      "domains": [
+        "steampowered.com",
+        "steamcommunity.com",
+        "steamstatic.com",
+        "steam-chat.com",
+        "steamgames.com"
+      ],
+      "marks": [],
+      "label": "steampowered"
+    },
+    {
+      "name": "Roblox",
+      "domains": [
+        "roblox.com",
+        "rbxcdn.com"
+      ],
+      "marks": [
+        "roblox"
+      ],
+      "label": "roblox"
+    },
+    {
+      "name": "Epic Games",
+      "domains": [
+        "epicgames.com",
+        "fortnite.com",
+        "unrealengine.com"
+      ],
+      "marks": [
+        "epic games",
+        "fortnite"
+      ],
+      "label": "epicgames"
+    },
+    {
+      "name": "Discord",
+      "domains": [
+        "discord.com",
+        "discord.gg",
+        "discordapp.com",
+        "discordapp.net"
+      ],
+      "marks": [
+        "discord"
+      ],
+      "label": "discord",
+      "word": true
+    },
+    {
+      "name": "PayPal",
+      "domains": [
+        "paypal.com",
+        "paypal.me",
+        "paypalobjects.com",
+        "paypal-community.com"
+      ],
+      "marks": [
+        "paypal"
+      ],
+      "label": "paypal",
+      "anyCountry": true
+    },
+    {
+      "name": "OpenAI ChatGPT",
+      "domains": [
+        "openai.com",
+        "chatgpt.com",
+        "oaistatic.com"
+      ],
+      "marks": [
+        "chatgpt",
+        "openai"
+      ],
+      "label": "chatgpt"
+    },
+    {
+      "name": "Telegram",
+      "domains": [
+        "telegram.org",
+        "t.me",
+        "telegram.me",
+        "telesco.pe"
+      ],
+      "marks": [
+        "telegram"
+      ],
+      "label": "telegram",
+      "word": true
+    },
+    {
+      "name": "DHL",
+      "domains": [
+        "dhl.com",
+        "dhl.de",
+        "dhl.sk",
+        "dhl.cz",
+        "dhl.co.uk"
+      ],
+      "marks": [
+        "dhl express",
+        "dhl parcel",
+        "dhl paket"
+      ],
+      "label": "dhl",
+      "anyCountry": true
+    },
+    {
+      "name": "Booking.com",
+      "domains": [
+        "booking.com",
+        "bstatic.com"
+      ],
+      "marks": [
+        "booking.com"
+      ],
+      "label": "booking",
+      "word": true
+    },
+    {
+      "name": "Binance",
+      "domains": [
+        "binance.com",
+        "binance.us",
+        "bnbstatic.com"
+      ],
+      "marks": [
+        "binance"
+      ],
+      "label": "binance"
+    },
+    {
+      "name": "Coinbase",
+      "domains": [
+        "coinbase.com"
+      ],
+      "marks": [
+        "coinbase"
+      ],
+      "label": "coinbase"
+    },
+    {
+      "name": "MetaMask",
+      "domains": [
+        "metamask.io"
+      ],
+      "marks": [
+        "metamask"
+      ],
+      "label": "metamask"
+    },
+    {
+      "name": "Trust Wallet",
+      "domains": [
+        "trustwallet.com"
+      ],
+      "marks": [
+        "trust wallet"
+      ],
+      "label": "trustwallet"
+    },
+    {
+      "name": "Ledger",
+      "domains": [
+        "ledger.com"
+      ],
+      "marks": [
+        "ledger live"
+      ],
+      "label": "ledger",
+      "word": true
+    },
+    {
+      "name": "Revolut",
+      "domains": [
+        "revolut.com",
+        "revolut.me"
+      ],
+      "marks": [
+        "revolut"
+      ],
+      "label": "revolut"
+    },
+    {
+      "name": "Wise",
+      "domains": [
+        "wise.com",
+        "transferwise.com"
+      ],
+      "marks": [
+        "transferwise"
+      ],
+      "label": "transferwise"
+    },
+    {
+      "name": "eBay",
+      "domains": [
+        "ebay.com",
+        "ebayimg.com",
+        "ebaystatic.com"
+      ],
+      "marks": [
+        "ebay"
+      ],
+      "label": "ebay",
+      "anyCountry": true
+    },
+    {
+      "name": "Kaspi",
+      "domains": [
+        "kaspi.kz"
+      ],
+      "marks": [
+        "kaspi.kz",
+        "kaspi банк"
+      ],
+      "label": "kaspi"
+    },
+    {
+      "name": "monobank",
+      "domains": [
+        "monobank.ua"
+      ],
+      "marks": [
+        "monobank"
+      ],
+      "label": "monobank"
+    },
+    {
+      "name": "ПриватБанк",
+      "domains": [
+        "privatbank.ua",
+        "privat24.ua"
+      ],
+      "marks": [
+        "приватбанк",
+        "privat24"
+      ],
+      "label": "privatbank"
+    },
+    {
+      "name": "Дія",
+      "domains": [
+        "diia.gov.ua"
+      ],
+      "marks": [
+        "дія.підпис",
+        "портал дія"
+      ],
+      "label": "diia"
+    },
+    {
+      "name": "Slovenská sporiteľňa",
+      "domains": [
+        "slsp.sk",
+        "csas.cz",
+        "george.sk"
+      ],
+      "marks": [
+        "slovenská sporiteľňa"
+      ],
+      "label": "slsp"
+    },
+    {
+      "name": "Tatra banka",
+      "domains": [
+        "tatrabanka.sk"
+      ],
+      "marks": [
+        "tatra banka",
+        "internet banking tatra"
+      ],
+      "label": "tatrabanka"
+    },
+    {
+      "name": "VÚB banka",
+      "domains": [
+        "vub.sk"
+      ],
+      "marks": [
+        "vúb banka",
+        "vub banka"
+      ],
+      "label": "vubbanka"
+    },
+    {
+      "name": "ČSOB",
+      "domains": [
+        "csob.sk",
+        "csob.cz"
+      ],
+      "marks": [
+        "čsob",
+        "csob"
+      ],
+      "label": "csob"
+    },
+    {
+      "name": "ScamFuse Demo Bank",
+      "domains": [
+        "scamfuse-demo-bank.example"
+      ],
+      "marks": [
+        "scamfuse demo bank"
+      ],
+      "label": "scamfusedemobank"
+    }
+  ],
+  "legitimateLookalikes": [
+    "paypay.ne.jp",
+    "stream.me",
+    "goggle.com",
+    "microsoftstore.com",
+    "applebank.com",
+    "amazonia.org"
+  ],
+  "freeHosting": [
+    "github.io",
+    "pages.dev",
+    "workers.dev",
+    "r2.dev",
+    "netlify.app",
+    "vercel.app",
+    "web.app",
+    "firebaseapp.com",
+    "glitch.me",
+    "replit.app",
+    "repl.co",
+    "onrender.com",
+    "fly.dev",
+    "herokuapp.com",
+    "000webhostapp.com",
+    "weebly.com",
+    "wixsite.com",
+    "webflow.io",
+    "framer.app",
+    "blogspot.com",
+    "sites.google.com",
+    "carrd.co",
+    "ngrok-free.app",
+    "ngrok.io",
+    "trycloudflare.com",
+    "duckdns.org",
+    "ipfs.io",
+    "dweb.link",
+    "fleek.co",
+    "square.site",
+    "godaddysites.com",
+    "mystrikingly.com",
+    "tilda.ws",
+    "tilda.cc",
+    "ucoz.net"
+  ],
+  "riskyTlds": [
+    "top",
+    "xyz",
+    "click",
+    "zip",
+    "mov",
+    "icu",
+    "cfd",
+    "sbs",
+    "rest",
+    "buzz",
+    "monster",
+    "quest",
+    "cyou",
+    "bond",
+    "lol",
+    "beauty",
+    "hair",
+    "skin",
+    "makeup",
+    "tk",
+    "ml",
+    "ga",
+    "cf",
+    "gq",
+    "pw",
+    "work",
+    "fit",
+    "support",
+    "help",
+    "live",
+    "online",
+    "site",
+    "website",
+    "shop",
+    "store"
+  ],
+  "riskyCountryTlds": [
+    "tk",
+    "ml",
+    "ga",
+    "cf",
+    "gq",
+    "cc",
+    "ws",
+    "co",
+    "to",
+    "me",
+    "io",
+    "ly",
+    "pw",
+    "cm",
+    "nu",
+    "la",
+    "st",
+    "gg",
+    "ac",
+    "vg",
+    "sh",
+    "tv",
+    "fm",
+    "ai",
+    "app",
+    "dev"
+  ],
+  "bait": [
+    "login",
+    "log-in",
+    "signin",
+    "sign-in",
+    "secure",
+    "security",
+    "verify",
+    "verification",
+    "account",
+    "accounts",
+    "support",
+    "online",
+    "update",
+    "auth",
+    "wallet",
+    "bonus",
+    "gift",
+    "help",
+    "service",
+    "id",
+    "confirm",
+    "unlock",
+    "recovery",
+    "pay",
+    "payment",
+    "billing",
+    "refund",
+    "claim",
+    "airdrop",
+    "free",
+    "promo",
+    "official",
+    "client",
+    "customer",
+    "app"
+  ]
+}

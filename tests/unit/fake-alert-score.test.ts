@@ -8,7 +8,7 @@ const SCAM_EN =
 
 const SCAM_RU =
   'Предупреждение безопасности! Ваш компьютер заблокирован. Обнаружен вирус и троян. ' +
-  'Не перезагружайте компьютер. Позвоните в службу поддержки: 8 800 555-01-99.';
+  'Не перезагружайте компьютер. Позвоните в службу поддержки: 0800 555 0199.';
 
 test('a short scam page with a support number is stopped', () => {
   assert.equal(scoreFakeAlert({ text: SCAM_EN, title: 'Security Alert', behaviour: new Set() }).high, true);

@@ -1,6 +1,6 @@
 {
   "language": "en",
-  "description": "Phrases typical for fake virus alerts (tech support scams). 'words' score 1 each, 'strong' score 2 each. Lower case.",
+  "description": "Phrases typical for fake virus alerts (tech support scams). 'words' score 1 each, 'strong' score 2 each. Lower case. 'phishing': phrases of fake login and payment pages.",
   "words": [
     "virus",
     "infected",
@@ -31,5 +31,34 @@
     "call technical support",
     "contact technical support immediately",
     "access to this pc has been blocked"
+  ],
+  "phishing": [
+    "verify your account",
+    "confirm your identity",
+    "your account has been suspended",
+    "your account has been limited",
+    "your account will be closed",
+    "unusual activity",
+    "unusual sign-in activity",
+    "suspicious activity",
+    "update your payment",
+    "update your billing",
+    "payment declined",
+    "your package is on hold",
+    "delivery attempt failed",
+    "pay the customs fee",
+    "redelivery fee",
+    "you have won",
+    "claim your reward",
+    "claim your prize",
+    "confirm your card",
+    "enter the code we sent",
+    "your password has expired",
+    "mailbox is full",
+    "unlock your account",
+    "restore access",
+    "wallet validation",
+    "connect your wallet",
+    "claim airdrop"
   ]
 }
