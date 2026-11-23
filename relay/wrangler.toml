@@ -1,0 +1,23 @@
+# ScamFuse alert relay on Cloudflare Workers (free plan). Deploy steps: relay/README.md
+
+name = "scamfuse-relay"
+main = "src/index.ts"
+compatibility_date = "2026-11-01"
+workers_dev = true
+
+[vars]
+# Telegram username of the bot, without @. Set it to the name you registered with @BotFather.
+BOT_USERNAME = "ScamFuseBot"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "scamfuse"
+# Replace with the ID shown after creating the "scamfuse" D1 database.
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "migrations"
+
+[triggers]
+# Daily at 03:17 UTC: report silent computers, delete old alerts.
+crons = ["17 3 * * *"]
+
+# Secrets (never in this file): TELEGRAM_BOT_TOKEN, TELEGRAM_WEBHOOK_SECRET
