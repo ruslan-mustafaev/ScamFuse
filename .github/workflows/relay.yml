@@ -16,7 +16,7 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     defaults:
       run:
         working-directory: relay
@@ -55,14 +55,9 @@ jobs:
             echo "::error::TELEGRAM_BOT_TOKEN does not look like a bot token. Copy it again from @BotFather, without spaces."
             exit 1
           fi
-          # Ask Telegram whether it knows the token. Only a clear "no" stops the deploy;
-          # a network hiccup on the runner is just a warning.
-          me=""
-          for attempt in 1 2 3; do
-            me="$(curl -4 -sS -m 20 "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getMe" || true)"
-            [[ $me == *'"ok":'* ]] && break
-            sleep 3
-          done
+          # Ask Telegram once whether it knows the token. Only a clear "no" stops the deploy;
+          # no answer or "slow down" is just a warning (extra calls would only add to the rate limit).
+          me="$(curl -4 -sS -m 30 "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getMe" || true)"
           if [[ $me == *'"ok":true'* ]]; then
             echo "Telegram bot: $(printf '%s' "$me" | grep -o '"username":"[^"]*"')"
           elif [[ $me == *'Too Many Requests'* ]]; then
@@ -102,8 +97,9 @@ jobs:
           fi
           # 403: the new secrets have not reached the Worker yet (seconds).
           # "retry after N": Telegram's rate limit, wait as long as it asks.
-          # Anything else (e.g. a brand-new workers.dev name Telegram cannot resolve yet): wait 20 s.
-          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+          # Anything else (e.g. a brand-new workers.dev name Telegram cannot resolve yet): wait too.
+          # At least a minute between Telegram calls, so the retries never feed the rate limit.
+          for attempt in 1 2 3 4 5 6; do
             rm -f setup.json
             status="$(curl -sS -m 60 -o setup.json -w '%{http_code}' --get --data-urlencode "key=$TELEGRAM_WEBHOOK_SECRET" "$url/setup" || true)"
             if [ "$status" = "200" ] && grep -q '"ok":true' setup.json; then
@@ -115,10 +111,11 @@ jobs:
               wait=5
             elif [ -n "$retry" ]; then
               wait=$(( retry + 2 ))
+              [ "$wait" -lt 60 ] && wait=60
             else
-              wait=20
+              wait=60
             fi
-            [ "$wait" -gt 120 ] && wait=120
+            [ "$wait" -gt 180 ] && wait=180
             echo "Attempt $attempt: HTTP $status $(cat setup.json 2>/dev/null) - next try in ${wait}s"
             sleep "$wait"
           done
