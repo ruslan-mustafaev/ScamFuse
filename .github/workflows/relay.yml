@@ -9,21 +9,56 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: relay-deploy
+  cancel-in-progress: false
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: relay
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_WEBHOOK_SECRET: ${{ secrets.TELEGRAM_WEBHOOK_SECRET }}
+      WRANGLER: wrangler@4.158.0
     steps:
       - uses: actions/checkout@v4
-      - uses: cloudflare/wrangler-action@v3
+
+      - uses: actions/setup-node@v4
         with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: relay
-          preCommands: npx wrangler d1 migrations apply scamfuse --remote
-          secrets: |
-            TELEGRAM_BOT_TOKEN
-            TELEGRAM_WEBHOOK_SECRET
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_WEBHOOK_SECRET: ${{ secrets.TELEGRAM_WEBHOOK_SECRET }}
+          node-version: 22
+
+      - name: Check the secrets
+        run: |
+          missing=""
+          for name in CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID TELEGRAM_BOT_TOKEN TELEGRAM_WEBHOOK_SECRET; do
+            [ -n "${!name}" ] || missing="$missing $name"
+          done
+          if [ -n "$missing" ]; then
+            echo "::error::Missing repository secrets:$missing (Settings → Secrets and variables → Actions)"
+            exit 1
+          fi
+          # Telegram accepts only these characters in the webhook secret.
+          if ! printf '%s' "$TELEGRAM_WEBHOOK_SECRET" | grep -Eq '^[A-Za-z0-9_-]{16,256}$'; then
+            echo "::error::TELEGRAM_WEBHOOK_SECRET must be 16-256 characters: Latin letters, digits, _ or -"
+            exit 1
+          fi
+
+      - name: Apply database migrations
+        run: npx -y "$WRANGLER" d1 migrations apply scamfuse --remote
+
+      - name: Publish the Worker
+        run: npx -y "$WRANGLER" deploy
+
+      # After the first publish, so the Worker already exists.
+      - name: Store the Telegram secrets
+        run: |
+          node -e 'process.stdout.write(JSON.stringify({
+            TELEGRAM_BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN,
+            TELEGRAM_WEBHOOK_SECRET: process.env.TELEGRAM_WEBHOOK_SECRET,
+          }))' | npx -y "$WRANGLER" secret bulk

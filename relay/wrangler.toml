@@ -12,8 +12,8 @@ BOT_USERNAME = "ScamFuseBot"
 [[d1_databases]]
 binding = "DB"
 database_name = "scamfuse"
-# Replace with the ID shown after creating the "scamfuse" D1 database.
-database_id = "00000000-0000-0000-0000-000000000000"
+# ID of the "scamfuse" D1 database (Cloudflare dashboard → Storage & databases → D1).
+database_id = "9e00ee39-cfed-473b-9ea2-c5c9d6fdc069"
 migrations_dir = "migrations"
 
 [triggers]
