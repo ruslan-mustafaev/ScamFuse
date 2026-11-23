@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Security alert</title>
+    <style>
+      body { margin: 0; font: 18px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; background: #7a0916; color: #fff; }
+      .banner { background: #fffaeb; color: #93370d; padding: 10px 16px; text-align: center; font-weight: 600; font-size: 15px; }
+      .alert { max-width: 640px; margin: 48px auto; background: #b42318; border: 3px solid #fff; border-radius: 10px; padding: 28px; text-align: center; }
+      h1 { margin: 0 0 12px; font-size: 30px; }
+      .phone { font-size: 30px; font-weight: 800; margin: 18px 0; }
+    </style>
+  </head>
+  <body>
+    <div class="banner" id="banner">Safe demo by ScamFuse. This page imitates a scam. Do not call any number.</div>
+    <div class="alert">
+      <h1 id="title">Security alert: your computer has been blocked</h1>
+      <p id="p1">Virus detected: Trojan spyware. Your data is at risk.</p>
+      <p id="p2">Do not restart your computer. Do not close this window.</p>
+      <p id="p3">Call technical support now (toll free):</p>
+      <div class="phone" id="phone">1-800-555-0199</div>
+    </div>
+    <script>
+      (function () {
+        var params = new URLSearchParams(location.search);
+        var lang = params.get('lang') || ((navigator.language || 'en').slice(0, 2) === 'ru' ? 'ru' : 'en');
+        if (lang === 'ru') {
+          document.documentElement.lang = 'ru';
+          document.title = 'Предупреждение безопасности';
+          document.getElementById('banner').textContent = 'Безопасная демонстрация ScamFuse. Эта страница изображает обман. Никуда не звоните.';
+          document.getElementById('title').textContent = 'Предупреждение безопасности: ваш компьютер заблокирован';
+          document.getElementById('p1').textContent = 'Обнаружен вирус: троян. Ваши данные под угрозой.';
+          document.getElementById('p2').textContent = 'Не перезагружайте компьютер. Не закрывайте это окно.';
+          document.getElementById('p3').textContent = 'Позвоните в техническую поддержку (бесплатный номер):';
+          document.getElementById('phone').textContent = '8 800 555-01-99';
+        }
+        // Real scam pages trap the Back button and grab the full screen.
+        for (var i = 0; i < 6; i += 1) history.pushState({ trap: i }, '', location.href);
+        document.addEventListener('click', function () {
+          if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(function () {});
+        }, { once: true });
+      })();
+    </script>
+  </body>
+</html>

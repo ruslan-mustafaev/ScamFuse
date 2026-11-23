@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ScamFuse demo</title>
+    <meta name="description" content="Safe imitations of common scams to try the ScamFuse browser extension." />
+    <link rel="stylesheet" href="demo.css" />
+  </head>
+  <body>
+    <div class="banner" data-t="banner">Safe demo by ScamFuse. Nothing on these pages can harm your computer.</div>
+    <div class="wrap">
+      <div class="top">
+        <div class="brand">ScamFuse</div>
+        <div class="langs"><a href="?lang=en">EN</a><a href="?lang=ru">RU</a></div>
+      </div>
+      <h1 data-t="title">Try a scam safely</h1>
+      <p class="lead" data-t="lead">Each scenario imitates a real trick.</p>
+
+      <div class="grid">
+        <div class="card">
+          <span class="tag" data-t="tag_all">All profiles</span>
+          <h2 data-t="clickfix_title">Fake “I am not a robot” check</h2>
+          <p data-t="clickfix_text"></p>
+          <a class="btn" id="open-clickfix" href="clickfix.html" data-keep-lang data-t="open">Open</a>
+        </div>
+        <div class="card">
+          <span class="tag" data-t="tag_all">All profiles</span>
+          <h2 data-t="alert_title">Fake virus alert</h2>
+          <p data-t="alert_text"></p>
+          <a class="btn" id="open-alert" href="fake-alert.html" data-keep-lang data-t="open">Open</a>
+        </div>
+        <div class="card">
+          <span class="tag" data-t="tag_all">All profiles</span>
+          <h2 data-t="remote_title">Remote access program</h2>
+          <p data-t="remote_text"></p>
+          <a class="btn" id="download-remote" href="files/ScamFuse-Demo-Remote-Support.exe" download data-t="download">Download (demo file)</a>
+        </div>
+        <div class="card">
+          <span class="tag" data-t="tag_child">Child profile</span>
+          <h2 data-t="program_title">Free game coins</h2>
+          <p data-t="program_text"></p>
+          <a class="btn" id="download-program" href="files/free-game-coins-demo.exe" download data-t="download">Download (demo file)</a>
+        </div>
+      </div>
+
+      <div class="steps">
+        <h2 data-t="steps_title">How to try</h2>
+        <ol>
+          <li data-t="step1"></li>
+          <li data-t="step2"></li>
+          <li data-t="step3"></li>
+        </ol>
+        <p><a href="https://github.com/ruslan-mustafaev/ScamFuse#install" data-t="install">Install ScamFuse</a></p>
+      </div>
+    </div>
+    <script src="demo.js"></script>
+  </body>
+</html>

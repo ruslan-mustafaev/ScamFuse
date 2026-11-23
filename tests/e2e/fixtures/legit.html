@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Docs: list processes</title>
+  </head>
+  <body>
+    <h1>How to list running processes</h1>
+    <p>Run this in a terminal you opened yourself:</p>
+    <pre id="code">powershell Get-Process | Sort-Object CPU</pre>
+    <button id="copy" type="button">Copy</button>
+    <p id="result"></p>
+    <script>
+      document.getElementById('copy').addEventListener('click', function () {
+        var text = document.getElementById('code').textContent;
+        navigator.clipboard.writeText(text).then(
+          function () { document.getElementById('result').textContent = 'copied'; },
+          function () { document.getElementById('result').textContent = 'copy failed'; }
+        );
+      });
+    </script>
+  </body>
+</html>

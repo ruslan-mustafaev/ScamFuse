@@ -85,16 +85,11 @@ function section(title: string, ...children: (Node | null)[]): HTMLElement {
 }
 
 function radios<T extends string>(name: string, values: readonly T[], current: T, label: (value: T) => string, onPick: (value: T) => void, disabled: (value: T) => boolean = () => false): HTMLElement {
-  const group = h('div', { class: 'stack', role: 'radiogroup' });
+  const group = h('div', { role: 'radiogroup' });
   for (const value of values) {
     const input = h('input', { type: 'radio', name, value, checked: value === current, disabled: disabled(value) });
     input.addEventListener('change', () => onPick(value));
-    group.append(
-      h('label', { class: 'switch-row', style: 'border:none; padding:6px 0; justify-content:flex-start' },
-        input,
-        h('span', {}, label(value)),
-      ),
-    );
+    group.append(h('label', { class: 'radio-row' }, input, h('span', {}, label(value))));
   }
   return group;
 }

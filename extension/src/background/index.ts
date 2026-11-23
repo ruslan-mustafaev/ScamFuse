@@ -2,6 +2,7 @@
 
 import siteRules from '../rules/sites.json' with { type: 'json' };
 import { classifyDownload, isRemoteToolSite } from '../core/downloads.ts';
+// isRemoteToolSite: pages of remote access programs are paused when they open (see pageStatus).
 import { hostMatches, hostOf } from '../core/domains.ts';
 import { nextGuard, hashPin, verifyPin } from '../core/pin.ts';
 import {
@@ -110,9 +111,11 @@ async function openPause(request: PauseRequest): Promise<void> {
   const repeat = findRepeat(Object.values(events), request.kind, request.host, now);
   let event: PauseEvent;
   if (repeat) {
+    // A repeat starts the waiting time again: pressing on is never faster than the first time.
     event = {
       ...repeat,
       outcome: 'pending',
+      createdAt: now,
       tabId: request.tabId ?? repeat.tabId,
       url: request.url || repeat.url,
     };
@@ -156,9 +159,9 @@ function cleanReasons(reasons: unknown): string[] {
     .slice(0, 16);
 }
 
-async function siteAllowed(settings: Settings, host: string): Promise<boolean> {
+async function siteAllowed(settings: Settings, host: string, kind: EventKind): Promise<boolean> {
   const allowances = await getAllowances();
-  return isAllowed(host, allowances, settings.trustedSites, Date.now());
+  return isAllowed(host, kind, allowances, settings.trustedSites, Date.now());
 }
 
 // ---------------------------------------------------------------- downloads
@@ -169,6 +172,16 @@ function downloadHost(item: chrome.downloads.DownloadItem): string {
   return direct || hostOf(item.referrer);
 }
 
+/** File name in the link itself ("…/AnyDesk.exe"): known at once, before the browser picks a name. */
+function linkFileName(url: string): string {
+  if (!/^https?:/i.test(url)) return '';
+  try {
+    return decodeURIComponent(new URL(url).pathname.split('/').pop() ?? '');
+  } catch {
+    return '';
+  }
+}
+
 async function checkDownload(item: chrome.downloads.DownloadItem): Promise<void> {
   if (item.state === 'interrupted') return;
   const handled = await getHandledDownloads();
@@ -176,17 +189,22 @@ async function checkDownload(item: chrome.downloads.DownloadItem): Promise<void>
   const settings = await getSettings();
   if (!settings.enabled) return;
   const host = downloadHost(item);
-  // Until the browser knows the file name, only the download site can tell.
-  if (!item.filename && !isRemoteToolSite(host)) return;
-  if (await siteAllowed(settings, host)) return;
 
-  const verdict = classifyDownload({
-    host,
-    fileName: item.filename,
-    remoteAccess: settings.detectors.remoteAccess,
-    programDownload: settings.detectors.programDownload,
-  });
+  // Both the saved name and the name in the link count: either may give the program away.
+  const names = [...new Set([item.filename, linkFileName(item.finalUrl || item.url), ''])];
+  let verdict = null;
+  for (const fileName of names) {
+    verdict = classifyDownload({
+      host,
+      fileName,
+      remoteAccess: settings.detectors.remoteAccess,
+      programDownload: settings.detectors.programDownload,
+    });
+    if (verdict) break;
+  }
+  // No verdict yet: the browser may still report the final name in onChanged.
   if (!verdict) return;
+  if (await siteAllowed(settings, host, verdict.kind)) return;
 
   await saveHandledDownloads([...handled, item.id]);
   if (item.state === 'in_progress') await chrome.downloads.pause(item.id).catch(() => undefined);
@@ -285,7 +303,7 @@ async function decide(
     }
     events[event.id] = { ...event, outcome: 'allowed', decidedBy, decidedAt: now };
     await saveEvents(events);
-    await saveAllowances(allow(await getAllowances(), event.host, now));
+    await saveAllowances(allow(await getAllowances(), event.kind, event.host, now));
     await saveLog(updateLog(await getLog(), event.id, { outcome: 'allowed', decidedBy }));
 
     if (event.downloadId !== undefined) {
@@ -435,15 +453,14 @@ async function pageStatus(sender: chrome.runtime.MessageSender): Promise<PageSta
   const settings = await getSettings();
   const tr = await getTranslator(settings.language);
   const host = hostOf(sender.tab?.url ?? sender.url);
-  const trusted = await siteAllowed(settings, host);
 
   if (
     settings.enabled &&
     settings.detectors.remoteAccess &&
     sender.frameId === 0 &&
     sender.tab?.id !== undefined &&
-    !trusted &&
-    isRemoteToolSite(host)
+    isRemoteToolSite(host) &&
+    !(await siteAllowed(settings, host, 'remote-site'))
   ) {
     await serial(() =>
       openPause({
@@ -458,11 +475,15 @@ async function pageStatus(sender: chrome.runtime.MessageSender): Promise<PageSta
   }
 
   return {
-    active: settings.enabled,
-    clipboard: settings.detectors.clipboard,
-    fakeAlert: settings.detectors.fakeAlert,
-    devSite: hostMatches(host, siteRules.developerSites),
-    trustedSite: trusted,
+    clipboard:
+      settings.enabled &&
+      settings.detectors.clipboard &&
+      !hostMatches(host, siteRules.developerSites) &&
+      !(await siteAllowed(settings, host, 'clipboard')),
+    fakeAlert:
+      settings.enabled &&
+      settings.detectors.fakeAlert &&
+      !(await siteAllowed(settings, host, 'fake-alert')),
     safeText: tr.t('clip_safe'),
   };
 }
@@ -479,7 +500,7 @@ async function signal(
   if (!settings.detectors[kind === 'clipboard' ? 'clipboard' : 'fakeAlert']) return;
   const url = sender.tab?.url ?? sender.url ?? '';
   const host = hostOf(url);
-  if (await siteAllowed(settings, host)) return;
+  if (await siteAllowed(settings, host, kind)) return;
   if (kind === 'clipboard' && hostMatches(host, siteRules.developerSites)) return;
   await serial(() =>
     openPause({

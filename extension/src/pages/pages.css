@@ -148,7 +148,7 @@ p { margin: 0 0 12px; }
 
 .field { display: block; margin-block-end: 18px; }
 .field > span { display: block; font-weight: 600; margin-block-end: 6px; }
-.field input, .field select {
+.field input:not([type="radio"]):not([type="checkbox"]), .field select {
   width: 100%;
   min-height: 52px;
   padding: 10px 14px;
@@ -254,6 +254,16 @@ ul.points li { margin-block-end: 8px; }
 .switch-row input[type="checkbox"] { width: 26px; height: 26px; flex: none; margin-block-start: 2px; accent-color: var(--primary); }
 
 .section { margin-block-end: 20px; }
+
+.radio-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  cursor: pointer;
+}
+.radio-row input { width: 22px; height: 22px; flex: none; margin: 0; accent-color: var(--primary); }
+.radio-row input:disabled + span { color: var(--muted); }
 
 table.log { width: 100%; border-collapse: collapse; font-size: 16px; }
 table.log th, table.log td { text-align: start; padding: 8px 6px; border-block-end: 1px solid var(--line); }

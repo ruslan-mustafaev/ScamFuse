@@ -31,6 +31,9 @@ function crc32(buffer) {
   return (crc ^ 0xffffffff) >>> 0;
 }
 
+// Fixed date (1 January 1980, the earliest ZIP date) so the same code always gives the same file.
+const DOS_DATE = (0 << 9) | (1 << 5) | 1;
+
 const local = [];
 const central = [];
 let offset = 0;
@@ -44,7 +47,8 @@ for (const path of await files(dist)) {
   header.writeUInt16LE(20, 4);
   header.writeUInt16LE(0x0800, 6); // UTF-8 names
   header.writeUInt16LE(8, 8); // deflate
-  header.writeUInt32LE(0, 10); // time and date
+  header.writeUInt16LE(0, 10); // time 00:00
+  header.writeUInt16LE(DOS_DATE, 12);
   header.writeUInt32LE(crc, 14);
   header.writeUInt32LE(packed.length, 18);
   header.writeUInt32LE(data.length, 22);
@@ -58,7 +62,8 @@ for (const path of await files(dist)) {
   entry.writeUInt16LE(20, 6);
   entry.writeUInt16LE(0x0800, 8);
   entry.writeUInt16LE(8, 10);
-  entry.writeUInt32LE(0, 12);
+  entry.writeUInt16LE(0, 12);
+  entry.writeUInt16LE(DOS_DATE, 14);
   entry.writeUInt32LE(crc, 16);
   entry.writeUInt32LE(packed.length, 20);
   entry.writeUInt32LE(data.length, 24);

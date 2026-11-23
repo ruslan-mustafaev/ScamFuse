@@ -81,12 +81,10 @@ export interface Verdict {
 
 // Messages between the parts of the extension.
 
+/** What the page scripts should watch on this tab: off when disabled or allowed. */
 export interface PageStatus {
-  active: boolean;
   clipboard: boolean;
   fakeAlert: boolean;
-  devSite: boolean;
-  trustedSite: boolean;
   safeText: string;
 }
 

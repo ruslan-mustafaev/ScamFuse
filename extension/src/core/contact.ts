@@ -71,11 +71,14 @@ export function telLink(phone: string): string | null {
   return digits ? `tel:+${digits}` : null;
 }
 
-/** "+421900123456" → "+421 900 123 456" for reading out loud. */
+/**
+ * The number for reading out loud. Country formats differ, so the person's own spacing is kept;
+ * a number typed without spaces is shown with a plus.
+ */
 export function formatPhone(phone: string): string {
-  const digits = normalizePhone(phone);
-  if (!digits) return phone.trim();
-  const groups = digits.slice(-9).match(/.{1,3}/g) ?? [];
-  const country = digits.slice(0, Math.max(0, digits.length - 9));
-  return `+${country ? `${country} ` : ''}${groups.join(' ')}`.trim();
+  const trimmed = phone.trim();
+  const digits = normalizePhone(trimmed);
+  if (!digits) return trimmed;
+  if (/[\s().-]/.test(trimmed)) return trimmed.startsWith('00') ? `+${trimmed.slice(2)}` : trimmed;
+  return `+${digits}`;
 }

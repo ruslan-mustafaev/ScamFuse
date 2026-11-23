@@ -59,7 +59,9 @@ test('chat links open a chat with one person and the text filled in', () => {
   assert.equal(buildAskLink({ channel: 'whatsapp', phone: '12', email: '' }, 's', 'x'), null);
   assert.equal(canAsk({ channel: 'email', phone: '+421900123456', email: '' }), false);
   assert.equal(telLink('+421 900 123 456'), 'tel:+421900123456');
-  assert.equal(formatPhone('+421900123456'), '+421 900 123 456');
+  assert.equal(formatPhone('+7 900 123-45-67'), '+7 900 123-45-67');
+  assert.equal(formatPhone('421900123456'), '+421900123456');
+  assert.equal(formatPhone('00421 900 123 456'), '+421 900 123 456');
 });
 
 test('the message names the site in a form that messengers do not turn into a link', () => {
@@ -82,13 +84,14 @@ test('continue opens after 15 seconds in advice mode and after the lock in stric
   assert.equal(continueAvailableAt({ createdAt: 1000 }, 'strict', 30), 1000 + 30 * 60_000);
 });
 
-test('allowed sites expire after 30 minutes; trusted sites include subdomains', () => {
+test('an allowed action expires after 30 minutes and covers only that kind; trusted sites cover all', () => {
   const now = 1_000_000;
-  const allowances = allow({}, 'example.com', now);
-  assert.equal(isAllowed('example.com', allowances, [], now + 29 * 60_000), true);
-  assert.equal(isAllowed('example.com', allowances, [], now + 31 * 60_000), false);
-  assert.equal(isAllowed('shop.trusted.org', {}, ['trusted.org'], now), true);
-  assert.equal(isAllowed('', {}, ['trusted.org'], now), false);
+  const allowances = allow({}, 'clipboard', 'example.com', now);
+  assert.equal(isAllowed('example.com', 'clipboard', allowances, [], now + 29 * 60_000), true);
+  assert.equal(isAllowed('example.com', 'clipboard', allowances, [], now + 31 * 60_000), false);
+  assert.equal(isAllowed('example.com', 'fake-alert', allowances, [], now), false);
+  assert.equal(isAllowed('shop.trusted.org', 'fake-alert', {}, ['trusted.org'], now), true);
+  assert.equal(isAllowed('', 'clipboard', {}, ['trusted.org'], now), false);
 });
 
 test('the same event from the same site within 10 minutes reuses the pause', () => {

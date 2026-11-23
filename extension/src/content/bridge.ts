@@ -16,12 +16,10 @@ const host = location.hostname.toLowerCase().replace(/^www\./, '');
 const isTop = window === window.top;
 const legitimateSecuritySite = hostMatches(host, siteRules.legitimateSecuritySites);
 
+// Until the background answers, protect by default (developer sites excepted).
 const status: PageStatus = {
-  active: true,
-  clipboard: true,
+  clipboard: !hostMatches(host, siteRules.developerSites),
   fakeAlert: true,
-  devSite: hostMatches(host, siteRules.developerSites),
-  trustedSite: false,
   safeText: FALLBACK_SAFE_TEXT,
 };
 
@@ -55,7 +53,7 @@ function visibleText(): string {
 // ------------------------------------------------------------------ clipboard
 
 function clipboardIsDangerous(text: string, scriptWritten: boolean): boolean {
-  if (!status.active || !status.clipboard || status.devSite || status.trustedSite) return false;
+  if (!status.clipboard) return false;
   if (text.trim().length < 4) return false;
   const pageText = visibleText();
   const verdict = scoreClipboard({
@@ -138,7 +136,7 @@ let fakeAlertReported = false;
 let evaluateTimer: ReturnType<typeof setTimeout> | undefined;
 
 function evaluateFakeAlert(): void {
-  if (fakeAlertReported || !status.active || !status.fakeAlert || status.trustedSite) return;
+  if (fakeAlertReported || !status.fakeAlert) return;
   if (legitimateSecuritySite) return;
   if (!isTop && behaviour.size === 0) return;
   const verdict = scoreFakeAlert({ text: visibleText(), title: document.title, behaviour });

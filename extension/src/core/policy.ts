@@ -12,20 +12,33 @@ export function continueAvailableAt(event: Pick<PauseEvent, 'createdAt'>, mode: 
     : event.createdAt + ADVICE_DELAY_SECONDS * 1000;
 }
 
-/** host → time until which it is allowed */
+/**
+ * "kind|host" → time until which that kind of action is allowed on that site.
+ * Allowing one thing ("Continue" on a download) does not switch off the other checks there.
+ */
 export type Allowances = Record<string, number>;
 
-export function isAllowed(host: string, allowances: Allowances, trustedSites: readonly string[], now: number): boolean {
+function allowanceKey(kind: EventKind, host: string): string {
+  return `${kind}|${host}`;
+}
+
+export function isAllowed(
+  host: string,
+  kind: EventKind,
+  allowances: Allowances,
+  trustedSites: readonly string[],
+  now: number,
+): boolean {
   if (!host) return false;
   if (hostMatches(host, trustedSites)) return true;
-  const until = allowances[host];
+  const until = allowances[allowanceKey(kind, host)];
   return typeof until === 'number' && until > now;
 }
 
-export function allow(allowances: Allowances, host: string, now: number): Allowances {
+export function allow(allowances: Allowances, kind: EventKind, host: string, now: number): Allowances {
   const next: Allowances = {};
   for (const [key, until] of Object.entries(allowances)) if (until > now) next[key] = until;
-  if (host) next[host] = now + ALLOW_MINUTES * 60_000;
+  if (host) next[allowanceKey(kind, host)] = now + ALLOW_MINUTES * 60_000;
   return next;
 }
 
