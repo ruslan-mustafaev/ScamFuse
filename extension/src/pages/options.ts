@@ -16,7 +16,7 @@ import {
   normalizeRelayUrl,
 } from '../core/settings.ts';
 import type { Channel, DecideResult, Mode, Profile, PublicState, Settings } from '../core/types.ts';
-import { h, languageSelect, logo, mount, send, translator } from './common.ts';
+import { h, languageSelect, logo, madeBy, mount, send, translator } from './common.ts';
 import { telegramBlock } from './telegram-link.ts';
 
 type Patch = Partial<Omit<Settings, 'pin' | 'version'>>;
@@ -339,6 +339,7 @@ function render(): void {
       logSection,
       about,
     ),
+    madeBy(),
   );
 }
 

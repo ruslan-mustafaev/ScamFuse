@@ -75,7 +75,7 @@ jobs:
           fi
           # New secrets can take a few seconds to reach the Worker.
           for attempt in 1 2 3 4 5 6 7 8; do
-            status="$(curl -sS -o setup.json -w '%{http_code}' --get --data-urlencode "key=$TELEGRAM_WEBHOOK_SECRET" "$url/setup" || true)"
+            status="$(curl -sS -m 30 -o setup.json -w '%{http_code}' --get --data-urlencode "key=$TELEGRAM_WEBHOOK_SECRET" "$url/setup" || true)"
             if [ "$status" = "200" ] && grep -q '"ok":true' setup.json; then
               echo "Telegram connected: $(cat setup.json)"
               exit 0

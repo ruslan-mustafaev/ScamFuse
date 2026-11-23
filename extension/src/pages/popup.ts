@@ -4,7 +4,7 @@ import { DEMO_URL } from '../core/config.ts';
 import { buildAskLink, buildAskMessage, canAsk, kindKey } from '../core/contact.ts';
 import { hostOf } from '../core/domains.ts';
 import type { PublicState, SiteCheck } from '../core/types.ts';
-import { h, languageSelect, mount, reasonLabel, send, translator } from './common.ts';
+import { h, languageSelect, madeBy, mount, reasonLabel, send, translator } from './common.ts';
 
 async function start(): Promise<void> {
   const state = await send<PublicState>({ type: 'getState' });
@@ -91,6 +91,7 @@ async function start(): Promise<void> {
         h('a', { href: 'options.html', target: '_blank' }, tr.t('popup_settings')),
         h('a', { href: DEMO_URL, target: '_blank', rel: 'noopener' }, tr.t('popup_demo')),
       ),
+      madeBy(),
     ),
   );
 }

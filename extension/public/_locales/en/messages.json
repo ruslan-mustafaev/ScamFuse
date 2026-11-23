@@ -565,7 +565,7 @@
     "message": "About"
   },
   "about_text": {
-    "message": "Open source. The log stays on this computer. Messages are sent only when someone presses the button."
+    "message": "Open source. The log stays on this computer. Without Telegram, a message is sent only when someone presses the button. With Telegram linked, the trusted person gets alerts: what was stopped and on which site."
   },
   "about_source": {
     "message": "Source code"

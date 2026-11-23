@@ -5,7 +5,7 @@ import { DEMO_URL } from '../core/config.ts';
 import type { Translator } from '../core/i18n.ts';
 import { defaultChannel, isValidEmail, isValidPin, normalizePhone } from '../core/settings.ts';
 import type { Channel, DecideResult, Profile, PublicState } from '../core/types.ts';
-import { h, languageSelect, logo, mount, send, translator } from './common.ts';
+import { h, languageSelect, logo, madeBy, mount, send, translator } from './common.ts';
 import { telegramBlock } from './telegram-link.ts';
 
 interface Draft {
@@ -60,9 +60,14 @@ function topbar(step: number | null): HTMLElement {
 
 let rerender: () => void = () => undefined;
 
+/** Shows a setup screen with the small credit line under it. */
+function show(page: HTMLElement): void {
+  mount(page, madeBy());
+}
+
 function renderProtected(): void {
   rerender = renderProtected;
-  mount(
+  show(
     h('div', { class: 'page' },
       topbar(null),
       h('main', { class: 'card stack' },
@@ -78,7 +83,7 @@ function renderProtected(): void {
 function renderProfiles(): void {
   rerender = renderProfiles;
   const choices: Profile[] = ['elder', 'child', 'self'];
-  mount(
+  show(
     h('div', { class: 'page' },
       topbar(1),
       h('main', {},
@@ -249,7 +254,7 @@ function renderContact(): void {
     renderDone();
   });
 
-  mount(
+  show(
     h('div', { class: 'page' },
       topbar(2),
       form,
@@ -279,7 +284,7 @@ function renderContact(): void {
 function renderDone(): void {
   rerender = renderDone;
   const hasContact = Boolean(draft.guardianName);
-  mount(
+  show(
     h('div', { class: 'page' },
       topbar(null),
       h('main', { class: 'card' },

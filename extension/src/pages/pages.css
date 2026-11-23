@@ -98,6 +98,11 @@ p { margin: 0 0 12px; }
 
 .lead { font-size: 21px; }
 .muted { color: var(--muted); }
+
+/* Credit line in small print under setup, settings and the toolbar window. */
+.made-by { margin: 16px 0 24px; text-align: center; font-size: 12px; color: var(--muted); }
+.made-by a { color: inherit; }
+.popup .made-by { margin: 12px 0 0; }
 .small { font-size: 16px; }
 
 .btn {

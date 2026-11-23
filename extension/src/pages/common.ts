@@ -1,6 +1,7 @@
 // Helpers shared by the extension pages. Pages are built with DOM calls and textContent only:
 // no HTML strings, so nothing from a website can ever be rendered as markup.
 
+import { MADE_BY_NAME, MADE_BY_URL } from '../core/config.ts';
 import { isRtl, LANGUAGE_NAMES, SUPPORTED_LANGUAGES, toBcp47, type Translator } from '../core/i18n.ts';
 import type { PageMessage } from '../core/types.ts';
 import { getTranslator } from '../shared/runtime-i18n.ts';
@@ -63,6 +64,14 @@ export function languageSelect(
 export function logo(): HTMLElement {
   const img = h('img', { src: '../icons/on-48.png', alt: '', width: 32, height: 32 });
   return h('div', { class: 'brand' }, img, h('span', {}, 'ScamFuse'));
+}
+
+/** "made by Dev - Interactive" in small print. Not shown on the pause screen. */
+export function madeBy(): HTMLElement {
+  return h('p', { class: 'made-by' },
+    'made by ',
+    h('a', { href: MADE_BY_URL, target: '_blank', rel: 'noopener' }, MADE_BY_NAME),
+  );
 }
 
 export function mount(...nodes: Node[]): void {
